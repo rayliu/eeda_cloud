@@ -1,0 +1,331 @@
+<%layout("/yh/layout.html"){%>
+
+	<div id="page-wrapper">
+		<div class="row">
+             <div class="col-lg-12">
+                 <div class="panel panel-default">
+                   <div class="panel-heading"style="font-size: 32px">
+                 		公司信息
+            		</div>
+            		<div class="panel-body">
+            			<div class="row-fluid">
+            				<form  id='leadsForm' name="leadsForm" action="/office/saveOffice" method="post">
+							<input id="officeId" name="officeId" type="hidden" value="${ul.id!''}">
+							<div class='form-group'>
+								<div class="col-lg-6">
+									<div class="form-group ">
+						                 <label class="control-label">分公司代码(必填)</label>
+						                 <input id="office_code" name="office_code" type="text" class="form-control" value="${ul.office_code!''}">
+						             </div>
+		                        
+						             <div class="form-group ">
+						                 <label class="control-label">分公司名称(必填)</label>
+						                 <input type="text" class="form-control" id="office_name" name="office_name" value="${ul.office_name!''}">
+						             </div>
+						             <div class="form-group ">
+						                 <label class="control-label">分公司简称(必填)</label>
+						                 <input type="text" class="form-control" id="abbr" name="abbr" value="${ul.abbr!''}">
+						             </div>
+						             <div class="form-group ">
+						                 <label class="control-label">公司简介</label>
+						                 <input type="text" class="form-control" id="company_intro" name="company_intro" value="${ul.company_intro!''}">
+						             </div>
+						             <div class="form-group">
+						                 <label class="control-label">公司类别</label>
+						                	<select class="form-control" id="type" name="type" value="">
+						                 	<option></option>
+						                 	<option>分公司</option>
+						                 	<option>合作公司</option>
+						                 	<option>配送中心RDC</option>
+						                 </select>
+						             </div>
+		                        
+		                         <div class="form-group ">
+					             	<button type="submit" class="btn  btn-primary btn-sm" id ='btn'>保存</button>
+					             	<a class="btn  btn-primary btn-sm" href="/office">返回</a>
+				             	</div>
+	                        
+				             </div>
+				             
+	                         <div class='form-group'>
+		                         <div class="col-lg-6">
+						              <div class="form-group">
+						                 <label class="control-label">联系方式(必填)</label>
+						                 <input type="text" class="form-control" id="phone" name="phone" value="${ul.phone!''}">
+						             </div>
+						             <div class="form-group ">
+						                 <label class="control-label">联系人(必填)</label>
+						                 <input type="text" class="form-control" id="office_person" name="office_person" value="${ul.office_person!''}">
+						             </div>
+						             <div class="form-group ">
+						                 <label class="control-label">email(必填)</label>
+						                 <input type="text" class="form-control" id="email" name="email" value="${ul.email!''}">
+						             </div>
+						              <div class="form-group ">
+						                 <label class="control-label">地址(必填)</label>
+						                 <input type="text" class="form-control" id="address" name="address" value="${ul.address!''}">
+						             </div>
+						             <div class="form-group">
+						             	<label class="control-label"></label>
+		                               <label class="control-label">网点所在地</label>
+	                                    <input id="location" type="hidden" name="location" value="${ul.location!''}">
+	                                    <div class="form-group">
+	                                        <label>省</label>
+	                                        <input id="hideProvince" type="hidden" value="${location.province!''}"/>
+	                                        <select id="mbProvince" style="width:150px" name="mbProvince" value=""></select>
+	                                        <label>市</label>
+	                                        <input id="hideCity" type="hidden" value="${location.city!''}"/>
+	                                        <select  id="cmbCity" style="width:150px" name="cmbCity" value=""></select>
+	                                        <label>区(县)</label>
+	                                        <input id="hideDistrict" type="hidden" value="${location.district!''}"/>
+	                                        <select  id="cmbArea" style="width:150px" name="cmbArea" value=""></select>
+	                                    </div>
+	                                 </div>
+		                         </div>
+		                     </div>
+			         	</form>
+			         	</div>
+            			</div>
+            		</div>
+				</div>
+				
+				<div class="panel panel-default">
+                   	<div class="panel-heading">
+                 		公司仓库列表
+            		</div>
+            		<div class="panel-body">
+            			<div class="row-fluid">                                       
+                          		<table class="table table-striped table-bordered table-hover" id="eeda-table">
+                               	<thead>
+                                   	<tr>
+                                       <th>仓库名称</th>
+                                       <th>联系人</th>
+                                       <th>电话</th>
+                                       <th>仓库所在地</th>
+                                       <th>详细地址</th>
+                                       <th>仓库描述</th>
+                                   	</tr>
+                               	</thead>
+                               	<tbody id="transferOrderMilestoneTbody" >
+                               	</tbody>
+                           	</table>
+                      	</div>
+                      	<!-- /.panel-body -->
+                  	</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+				
+	
+<%}%>
+<!-- 引入校验的js 文件及其 中文 文件-->
+<script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/jvalidate.messages_cn.js"></script>
+<script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script>
+	if('${ul.office_name!''}'){
+		document.title = '${ul.office_name!''}'+' | '+document.title;
+	}
+	$(document).ready(function() {
+		var type = '${ul.type!''}';
+		var officeName = '${ul.office_name!''}';
+		if(type == "总公司"){
+			$('#type').attr("disabled",true);
+			$('#office_code').attr("disabled",true);
+			$('#office_name').attr("disabled",true);
+			$('#abbr').attr("disabled",true);
+			$('#phone').attr("disabled",true);
+			$('#btn').attr("disabled",true);
+			$('#office_person').attr("disabled",true);
+			$('#email').attr("disabled",true);
+			$('#address').attr("disabled",true);
+			$('#company_intro').attr("disabled",true);
+			
+			$('#type').empty().append("<option>" + type + "</option>");	
+		}else{
+			$('#type').val(type);
+		}
+    	$('#menu_profile').addClass('active').find('ul').addClass('in');
+        $('#leadsForm').validate({
+            rules: {
+              office_code: {
+                required: true
+              },
+              abbr: {
+                required: true
+              },
+              office_name:{//form 中 name为必填
+                required: true,
+                remote:{
+                	url: "/office/checkOfficeNameExist", //后台处理程序    
+                    type: "post",  //数据发送方式  
+                    data:  {                     //要传递的数据   
+                    	office_name: function() {
+                            return $("#office_name").val()+","+officeName;
+                        }   
+                    } 
+                }
+              },
+              email:{
+            	  required: true,
+            	  email:true
+              },
+              contact_id:{//form 中 name为必填
+                  required: true
+              },
+              type:{
+            	  required: true
+              }
+            },
+            messages : {
+            	office_name : {
+	        		required:  "不能为空",
+	        		remote:"名称已存在"
+	        	},
+	        	email:{
+	            	  email:"邮箱格式不正确"
+	              }
+	        },
+            highlight: function(element) {
+                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            },
+            success: function(element) {
+                element.addClass('valid').closest('.form-group').removeClass('has-error').addClass('has-success');
+            }
+        });
+        
+        var warehouseTab = $('#eeda-table').dataTable({
+        	"bFilter": false, //不需要默认的搜索框
+        	"bSort": false, // 不要排序
+        	"sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+        	"iDisplayLength": 20,
+        	"bServerSide": true,
+        	"oLanguage": {
+                "sUrl": "/eeda/dataTables.ch.txt"
+            },
+            "sAjaxSource": "/office/findOfficeWarehouse/"+$("#officeId").val(),
+            "aoColumns": [   
+					{"mDataProp":"WAREHOUSE_NAME"}, 
+					{"mDataProp":"NOTIFY_NAME"},        	
+					{"mDataProp":"NOTIFY_MOBILE"},
+					{"mDataProp":"DNAME"},       	
+					{"mDataProp":"WAREHOUSE_ADDRESS"},        	
+					{"mDataProp":"WAREHOUSE_DESC"},
+            ],      
+        });	        
+
+        //获取全国省份
+        $(function(){
+         	var province = $("#mbProvince");
+         	$.post('/serviceProvider/province',function(data){
+         		province.append("<option>--请选择省份--</option>");
+    				var hideProvince = $("#hideProvince").val();
+         		for(var i = 0; i < data.length; i++)
+    				{
+    					if(data[i].NAME == hideProvince){
+         				province.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+         				
+         				
+    					}else{
+         				province.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+    					}
+    				}
+         		
+         	},'json');
+        });
+         //获取省份的城市
+         $('#mbProvince').on('change', function(){
+         	//var inputStr = $(this).parent("option").attr('id'); 
+    			var inputStr = $(this).val();
+    			$.get('/serviceProvider/city', {id:inputStr}, function(data){
+    				var cmbCity =$("#cmbCity");
+    				cmbCity.empty();
+    				cmbCity.append("<option>--请选择城市--</option>");
+    				for(var i = 0; i < data.length; i++)
+    				{
+    					cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+    				}
+    			},'json');
+    		});
+         //获取城市的区县
+         $('#cmbCity').on('change', function(){
+         	//var inputStr = $(this).parent("option").attr('id'); 
+    			var inputStr = $(this).val();
+    		var code = $("#location").val(inputStr);
+    			$.get('/serviceProvider/area', {id:inputStr}, function(data){
+    				var cmbArea =$("#cmbArea");
+    				cmbArea.empty();
+    				cmbArea.append("<option>--请选择区(县)--</option>");
+    				for(var i = 0; i < data.length; i++)
+    				{
+    					cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");	
+    				}
+    			},'json');
+    		});
+         
+         $('#cmbArea').on('change', function(){
+         	//var inputStr = $(this).parent("option").attr('id'); 
+    			var inputStr = $(this).val();
+    			var code = $("#location").val(inputStr);
+    		});
+         
+      // 回显城市
+ 		var hideProvince = $("#hideProvince").val();
+      $.get('/serviceProvider/searchAllCity', {province:hideProvince}, function(data){
+ 			if(data.length > 0){
+ 				var cmbCity =$("#cmbCity");
+ 				cmbCity.empty();
+ 				cmbCity.append("<option>--请选择城市--</option>");
+ 				var hideCity = $("#hideCity").val();
+ 				for(var i = 0; i < data.length; i++)
+ 				{
+ 					if(data[i].NAME == hideCity){
+ 						cmbCity.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+ 					}else{
+ 						cmbCity.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+ 					}
+ 				}
+ 			}
+ 		},'json');
+
+      // 回显区
+      var hideCity = $("#hideCity").val();
+      $.get('/serviceProvider/searchAllDistrict', {city:hideCity}, function(data){
+ 			if(data.length > 0){
+ 				var cmbArea =$("#cmbArea");
+ 				cmbArea.empty();
+ 				cmbArea.append("<option>--请选择区(县)--</option>");
+ 				var hideDistrict = $("#hideDistrict").val();
+ 				for(var i = 0; i < data.length; i++)
+ 				{
+ 					if(data[i].NAME == hideDistrict){
+ 						cmbArea.append("<option value= "+data[i].CODE+" selected='selected'>"+data[i].NAME+"</option>");
+ 					}else{
+ 						cmbArea.append("<option value= "+data[i].CODE+">"+data[i].NAME+"</option>");						
+ 					}
+ 				}
+ 			}
+ 		},'json');
+      
+ 	// 获取所有网点
+      $.post('/transferOrder/searchAllOffice',function(data){
+ 		 if(data.length > 0){
+ 			 var officeSelect = $("#officeSelect");
+ 			 officeSelect.empty();
+ 			 var hideOfficeId = $("#hideOfficeId").val();
+ 			 for(var i=0; i<data.length; i++){
+ 				 if(data[i].ID == hideOfficeId){
+ 					 officeSelect.append("<option class='form-control' value='"+data[i].ID+"' selected='selected'>"+data[i].OFFICE_NAME+"</option>");
+ 				 }else{
+ 					 officeSelect.append("<option class='form-control' value='"+data[i].ID+"'>"+data[i].OFFICE_NAME+"</option>");					 
+ 				 }
+ 			 }
+ 		 }
+ 	 },'json');
+
+    }); 
+</script>

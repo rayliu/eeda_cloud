@@ -1,0 +1,13 @@
+<%layout("/layout.html"){%>
+        <div id="page-wrapper">
+            
+        </div>
+        <!-- /#page-wrapper -->
+<%}%>
+	
+    <script>
+        requirejs(['js/common'], function (common) {
+            requirejs(['app/index/main']);
+        });
+    </script>
+    

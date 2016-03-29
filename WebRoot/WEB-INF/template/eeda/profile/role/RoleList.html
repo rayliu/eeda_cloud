@@ -1,0 +1,118 @@
+ <%layout("/layout.html"){%>
+<link href="/js/lib/sco/css/sco.message.css" rel="stylesheet">
+<div id="wrapper">
+	<div id="roleList" style="display: true">
+		<div id="page-wrapper">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="btn-header">
+						<a id = "createBtn" class="btn  btn-primary">
+						<span class="hidden-tablet">添加岗位</span></a>
+					</div>
+					
+				</div>
+			</div>
+			<!-- /.col-lg-12 -->
+
+			
+			<!-- /.row -->
+			<div class="row">
+				<div class="col-lg-12">
+				
+					<div class="panel panel-default">
+						<div class="panel-heading">
+                            <i class="fa fa-list fa-fw"></i>岗位列表
+                        </div>
+						<!-- /.panel-heading -->
+						<div class="panel-body">
+							
+							<%include("/eeda/component/form/detailTable.html", 
+                                {
+                                    id:'eeda-table', 
+                                    headers:['岗位名称', 
+                                        '备注', 
+                                        '']
+                                }){} %>
+
+						</div>
+
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+		<!-- /#page-wrapper -->
+		<div id="addRole" style="display: none;">
+			<div id="page-wrapper">
+				<div class="row">
+					<div class="col-lg-12 panel-body">
+		
+						<div class="btn-header" style="font-size: 32px">创建新用户岗位</div>
+		
+					</div>
+				</div>
+		
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="panel panel-default">
+		
+							<div class="panel-body">	
+								<form id="addRoleForm" name="form1" method="post" action="/role/SaveRole">
+	
+									<div class="col-lg-8">
+										<div class="form-group">
+											<label>新岗位名称(必填)</label>
+											<input id="rolename" class="form-control" type="text" name="rolename">
+										</div>
+										<div class="form-group">
+											<label>备注</label>
+											<textarea class="form-control" rows="3" name="roleremark"></textarea>
+										</div>
+									</div>
+									<div class="col-lg-8">
+										<button id="saveBtn" class="btn  btn-primary" type="submit">保存</button>
+										<a class="btn  btn-primary" href="/role"> 返回 </a>
+									</div>
+								</form>
+		
+							</div>
+		
+						</div>
+		
+					</div>
+		
+				</div>
+		
+			</div>
+		</div>
+		
+</div>
+
+
+<%}%>
+
+
+<!--script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+<script src="/yh/js/jquery.validate.min.js"></script>
+<script src="/yh/js/jvalidate.messages_cn.js"></script-->
+<script>
+	    <% var roleUpdatePermission=shiro.hasPermission("Role.update");
+	       var roleDelPermission = shiro.hasPermission("Role.delete");
+	    %>
+		var Role={};
+		Role.UpdatePermission=${roleUpdatePermission};
+		Role.DelPermission = ${roleDelPermission};
+</script>
+<script>
+    requirejs(['js/common'], function (common) {
+        requirejs(['app/profile/role/list']);
+    });
+</script>
+
+
+
+

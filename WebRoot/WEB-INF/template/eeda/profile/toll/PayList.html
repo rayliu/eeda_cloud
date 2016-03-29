@@ -1,0 +1,135 @@
+<%layout("/yh/layout.html"){%>
+
+        
+ <div id="page-wrapper">
+
+        <div id="row">
+           
+                <div class="col-lg-12">
+                    <h3 class="btn-header"></h3>
+                </div>
+                
+               
+                <!-- /.col-lg-12 -->
+            
+            <!-- /.row -->
+            
+            <div class="row">
+                <div class="col-lg-12">
+                	<% if(shiro.hasPermission("Pay.create")){%>
+			            <div class="btn-header">
+			            	<a  class="btn  btn-primary" href="/pay/Edit">添加条目</a>
+			            </div>
+	            		<%}%>
+                    <div class="panel panel-default">
+                        
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover" id="toll_example" style="width: 1237px;">
+                                    <thead>
+                                        <tr>
+                                            <th>条目类型</th>
+                                            <th>条目名称</th>
+                                            <th>条目代码</th>
+                                            <th>备注</th>                                           
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                                                                                                                            
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            
+                        </div>
+                       
+                    </div>
+                   
+                </div>
+               
+            </div>
+         
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <%}%>
+    <!-- /#wrapper -->
+
+
+
+    <!-- Page-Level Plugin Scripts - Tables -->
+    <script src="/yh/js/plugins/dataTables/jquery.dataTables.js"></script>
+    <script src="/yh/js/plugins/dataTables/dataTables.bootstrap.js"></script>
+
+    <!-- Page-Level Demo Scripts - Tables - Use for reference -->
+    <script>
+    <%
+    	 var payUpdate = shiro.hasPermission("Pay.update");
+    	 var payDel = shiro.hasPermission("Pay.delete");
+    %>
+    var Pay = {};
+    Pay.isUpdate = ${payUpdate};
+    Pay.isDel = ${payDel};
+    $(document).ready(function() {
+    	document.title = '付费条目定义查询 | '+document.title;
+      $('#menu_profile').addClass('active').find('ul').addClass('in');
+   	 $("#del").click(function(){
+       	//alert("waerwerwee");
+       });
+   	 $("#query").click(function(){
+   	    	//alert("123");
+   	    });
+   	 $('#toll_example').dataTable( {
+   		 "sDom": "<'row-fluid'<'span6'l><'span6'f>r><'datatable-scroll't><'row-fluid'<'span12'i><'span12 center'p>>",
+            "bFilter": false, //不需要默认的搜索框
+   	        "iDisplayLength": 10,
+   	    	"oLanguage": {
+   	            "sUrl": "/eeda/dataTables.ch.txt"
+   	        },
+   	        "sAjaxSource": "/pay/list",
+   			"aoColumns": [
+   				{ "mDataProp": "TYPE" },
+   	            { "mDataProp": "NAME" },
+   	            { "mDataProp": "CODE" },
+   	            { "mDataProp": "REMARK" },
+   	            { "mDataProp": null,
+   	         		"sWidth": "8%", 
+   	         		"bVisible":(Pay.isUpdate || Pay.isDel),
+	   	         	"fnRender": function(obj) { 
+		   	        	 var str = "<nobr>";
+		   	        	 if(Pay.isUpdate){
+		   	        		 str += "<a class='btn  btn-primary btn-sm' href='/pay/Edit/"+obj.aData.ID+"' target='_blank'>"+
+				                     "<i class='fa fa-edit fa-fw'></i> "+
+				                     "编辑"+
+					                 "</a> ";
+		   	        	 }
+		   	        	 if(Pay.isDel){
+		   	        		 if(obj.aData.IS_STOP != true){
+			   	        		str += "<a class='btn btn-danger  btn-sm' href='/pay/delete/"+obj.aData.ID+"'>"+
+						                     "<i class='fa fa-trash-o fa-fw'></i> "+ 
+						                     "停用"+
+						                 "</a>";
+			   	        	 }else{
+			   	        		str += "<a class='btn btn-success  btn-sm' href='/pay/delete/"+obj.aData.ID+"'>"+
+						                     "<i class='fa fa-trash-o fa-fw'></i> "+ 
+						                     "启用"+
+						                 "</a>"; 
+			   	        	} 
+		   	        	 }
+		   	        	str += "</nobr>";
+		   	        	return str;
+	                
+	   	         }
+   	 	   }
+             
+   	     ]
+   	});
+   		
+
+   });
+   
+
+    </script>

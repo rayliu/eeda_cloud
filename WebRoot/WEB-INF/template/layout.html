@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>${SYS_CONFIG.system_title!''}</title>
+    <% var logoPath=SYS_CONFIG.logo!'';
+    if(logoPath==""){%>
+	<link rel="shortcut icon" href="/images/eeda_logo.ico">
+	<%}else{%>
+	<link rel="shortcut icon" href="${SYS_CONFIG.logo!''}">
+	<%}%>
+    <!-- Core CSS - Include with every page -->
+    <link href="/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="/js/lib/datatables/css/jquery.dataTables.css" rel="stylesheet">
+    <link href="/js/lib/datatables/css/dataTables.bootstrap.css" rel="stylesheet">
+    
+    <!-- Page-Level Plugin CSS - Dashboard -->
+    <link href="/css/morris/morris-0.4.3.min.css"  rel="stylesheet">
+    <link href="/css/timeline/timeline.css" rel="stylesheet">
+
+    <!-- SB Admin CSS - Include with every page -->
+    <link href="/js/lib/sb-admin/css/sb-admin.css" rel="stylesheet">
+    
+    <link href="/css/eeda.css" rel="stylesheet">
+
+    <script src="/js/lib/require-2.1.22.js"></script>
+    
+    
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="">${SYS_CONFIG.system_title!''}</a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+				<%
+	                var title = SYS_CONFIG.system_title!'易达云平台';
+	                var show = 'none';
+	                if(title=='易达云平台'){
+	                    show = 'block';
+	                }
+	            %>
+                <!-- /.dropdown -->
+                ${office_name!''}
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i><span class="hidden-phone"> ${userId!'N/A'}</span>   <i class="fa fa-caret-down"></i>
+                    </a>
+                  
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="/loginUser/editPerson"><i class="fa fa-user fa-fw"></i> 用户信息</a>
+                        </li>
+                       
+                        <li class="divider"></li>
+                        <li><a href="/logout"><i class="fa fa-sign-out fa-fw"></i> 退出</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+        </nav>
+        <!-- /.navbar-static-top -->
+
+        <nav  id='left_side_bar' class="navbar-default navbar-static-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <%
+                    for(module in modules){
+                    %>
+                        <li id="${module.id!}">
+                            <a href="#">${module.module_name!}<span class="fa arrow"></span></a>
+                            <% if(module.orders != null ){%>
+                                <ul class="nav nav-second-level">
+                                    <%
+                                    for(order in module.orders){
+                                    %>
+                                        <li id="${order.id}">
+                                            <a href="/m/${order.id}">${order.module_name!}</a>
+                                        </li>
+                                    <%}%>
+                                </ul>
+                            <%}%>
+                        </li>
+                    <%}%>
+
+                    <% if(shiro.hasRole("系统管理员")){%>
+                        <li id="menu_sys_profile">
+                            <a href="#"><i class="fa fa-cog fa-fw"></i> 权限配置<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="/role">岗位</a>
+                                </li>
+                                <li>
+                                    <a href="/privilege">岗位权限</a>
+                                </li>
+                                <li>
+                                    <a href="/loginUser">登录用户</a>
+                                </li>
+
+                                <li>
+                                    <a href="/userRole">用户岗位</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+
+                        <li id="menu_sys_dev">
+                            <a href="#"><i class="fa fa-cog fa-fw"></i> 后台开发<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="/module">模块定义</a>
+                                </li>
+                                <%
+                                for(module in sys_modules!){
+                                %>
+                                    <li id="${module.id!}">
+                                        <a href="/m/${module.id}">${module.module_name!}</a>
+                                    </li>
+                                <%}%>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                    <%}%>
+                    <!--li>
+                        <a href="#"><i class="fa fa-question fa-fw"></i> 需要帮助<span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li>
+                                <a href="/doc" target="_blank">帮助文档</a>
+                            </li>
+                            <li>
+                                <a href="#">问题反馈</a>
+                            </li>
+                            
+                        </ul>
+                    </li-->
+                    
+                    
+                    <!--li id="menu_warehouse">
+                        <a href="#"><i ></i> QQ客服群:436923659<span></span></a>
+                    </li-->
+                    
+                    
+                </ul>
+                <!--  /#side-menu -->
+            </div>
+            <!-- /.sidebar-collapse -->
+        </nav>
+        <!-- /.navbar-static-side -->
+        <a id='hide_menu_btn' href="#" style="position: absolute;left: 250px;top: 250px; z-index:1; height: 200px; background-color: rgb(241, 241, 241); border-top-right-radius: 10px; border-bottom-right-radius:10px;" title="隐藏菜单">
+            <i id='hide_menu_icon' class="fa fa-angle-double-left fa-2x" style="
+    margin-top: 90px;"
+></i>
+        </a>
+        ${layoutContent}
+
+    </div>
+    <!-- /#wrapper 11-->
+
+</body>
+
+</html>
