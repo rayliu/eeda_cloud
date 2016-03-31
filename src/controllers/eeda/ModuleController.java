@@ -46,6 +46,7 @@ public class ModuleController extends Controller {
     private Logger logger = Logger.getLogger(ModuleController.class);
     Subject currentUser = SecurityUtils.getSubject();
     
+    Long office_id = UserLogin.getCurrentUser().getLong("office_id");
     ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     
     public void index() {
@@ -423,7 +424,8 @@ public class ModuleController extends Controller {
         
         for (Record record : event_list) {
             String event_script= record.getStr("EVENT_SCRIPT");
-            
+            if(StringUtils.isEmpty(event_script))
+                continue;
             List<Record> commandRecList = new ArrayList<Record>();
             
             List<Map> commandList = new Gson().fromJson(event_script, 
@@ -626,7 +628,7 @@ public class ModuleController extends Controller {
     }
     
     public void getRoleList(){
-        List<Record> recs = Db.find("select * from eeda_role");
+        List<Record> recs = Db.find("select * from eeda_role where office_id=?", office_id);
         renderJson(recs);
     }
     
