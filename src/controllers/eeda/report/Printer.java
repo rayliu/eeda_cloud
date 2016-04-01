@@ -13,10 +13,12 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 
+import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.DbKit;
 
 public class Printer {
     private Logger logger = Logger.getLogger(ReportController.class);
+    private String webRootPath=PathKit.getWebRootPath()+"/";
 	/**
 	 * fileName:当前打印的模板
 	 * outFileName:当前打印的名称
@@ -28,19 +30,25 @@ public class Printer {
 		return new Printer();
 	}
 	
-	public String print(String fileName,String outFileName,HashMap<String, Object> params){		
-        File file = new File("WebRoot/download");
+	public String print(String fileName, String outFileName, HashMap<String, Object> params){
+	    String reportFilePath = webRootPath+fileName;
+	    logger.debug("reportFilePath:"+reportFilePath);
+	    
+        File file = new File(webRootPath+"download");
         if(!file.exists()){
-       	 file.mkdir();
+            file.mkdir();
         }
+        
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");
         
         outFileName += "-" + format.format(date) + ".pdf";
-        String downloadPath=file.getAbsolutePath()+"/";
+        String downloadFilePath = webRootPath+"/download/"+outFileName;
+        logger.debug("downloadFilePath:"+downloadFilePath);
+        
 		try {
-			JasperPrint print = JasperFillManager.fillReport(fileName, params, DbKit.getConfig().getConnection());
-			JasperExportManager.exportReportToPdfFile(print, downloadPath+outFileName);
+			JasperPrint print = JasperFillManager.fillReport(reportFilePath, params, DbKit.getConfig().getConnection());
+			JasperExportManager.exportReportToPdfFile(print, downloadFilePath);
 		} catch (JRException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
