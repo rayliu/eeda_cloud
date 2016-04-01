@@ -1,5 +1,5 @@
 define(['dataTables', 'sb_admin'], function(){
-	
+
 $(document).ready(function() {
     	document.title = '用户岗位查询 | '+document.title;
         $('#menu_sys_profile').addClass('active').find('ul').addClass('in');
@@ -23,7 +23,7 @@ $(document).ready(function() {
 	        		}
 	        	},
 	            { "data": "C_NAME", "width":"30%"},
-	            { "data": "NAME", "width":"30%"},
+	            { "data": "ROLE_NAME", "width":"30%"},
 	            { "data": "REMARK", "width":"20%"},
 	            { "data": null, "width":"10%",
 	            	"render": function ( data, type, full, meta ) {
@@ -44,7 +44,7 @@ $(document).ready(function() {
 	            }
 	        ]
 		});
-   	 
-   		
+
+
    });
 });

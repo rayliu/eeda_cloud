@@ -4,8 +4,8 @@ $(document).ready(function() {
 	if(user_name){
 		document.title = user_name+' | '+document.title;
 	}
-	$('#menu_sys_profile').addClass('active').find('ul').addClass('in');	
-	
+	$('#menu_sys_profile').addClass('active').find('ul').addClass('in');
+
 	//datatable, 动态处理
 	var name = $("#user_name").val();
 
@@ -25,18 +25,18 @@ $(document).ready(function() {
             "columns": [
                 { "data": null, "width":"10%",
                     "render": function ( data, type, full, meta ) {
-                        if(full.ROLE_ID==null){
-                             return '<input type="checkbox" name="roleCheck" class="unChecked" value="'+full.ID+'">'; 
+                        if(full.IS_AUTH!=1){
+                             return '<input type="checkbox" name="roleCheck" class="unChecked" value="'+full.ID+'">';
                          }else{
                              return '<input type="checkbox" checked="true" class="unChecked" name="roleCheck" value="'+full.ID+'">';
-                         } 
+                         }
                     }
                 },
                 { "data": "NAME", "width":"90%"}
             ]
         });
 
-   	
+
     var role=[];
     $("#eeda-table").on('click','.unChecked',function(){
 		 role.splice(0,role.length);
@@ -49,21 +49,16 @@ $(document).ready(function() {
 	  });
     $('#saveBtn').click(function(e){
         e.preventDefault();
-       
+
         var username = $("#user_name").val();
         var roles = role.toString();
     	$.post('/userRole/updateRole?name='+username+'&roles='+roles,function(data){
     		$.scojs_message('更新成功', $.scojs_message.TYPE_OK);
     		//$("#saveBtn").attr("disabled",true);
     	},'json');
-        
-    });
-    var alerMsg='<div id="message_trigger_err" class="alert alert-danger alert-dismissable"  style="display:none">'+
-			    '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>'+
-			    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. <a href="#" class="alert-link">Alert Link</a>.'+
-			    '</div>';
-    $('body').append(alerMsg); 
-    
-});	
 
-}); 
+    });
+
+});
+
+});
