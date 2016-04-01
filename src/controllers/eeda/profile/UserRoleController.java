@@ -16,6 +16,7 @@ import models.UserLogin;
 import models.UserOffice;
 import models.UserRole;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -36,6 +37,7 @@ public class UserRoleController extends Controller {
 	private Logger logger = Logger.getLogger(PrivilegeController.class);
 	Subject currentUser = SecurityUtils.getSubject();
 	
+	Long office_id = UserLogin.getCurrentUser().getLong("office_id");
 	ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 
 	public void index(){
@@ -53,34 +55,16 @@ public class UserRoleController extends Controller {
 			        + getPara("iDisplayLength");
 		}
 		
-		String totalWhere ="";
-		String sql = "";
-		
-		Long parentID =pom.getBelongOffice();
-		if(parentID == null || "".equals(parentID)){
-			parentID = pom.getParentOfficeId();
-			totalWhere ="select count(1) total from eeda_user_role ur left join eeda_role r on r.id = ur.role_id where r.office_id = " + parentID;
-			sql = "select ur.user_name,ul.c_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_id from eeda_user_role ur "
-			        + "left join eeda_role r on r.id=ur.role_id "
-			        + "left join eeda_user ul on ur.user_name = ul.user_name "
-			        + "left join eeda_office o on ul.office_id = o.id "
-			        + "where (o.id = " + parentID + " or o.belong_office = " + parentID + ") and (r.office_id = " + parentID + " or r.office_id is null) group by ur.user_name" + sLimit;
+		String sql = "select ur.user_name,ul.c_name, group_concat(r.name separator '<br>') role_name,ur.remark,ur.role_id from eeda_user_role ur "
+             +" left join eeda_role r on r.id=ur.role_id" 
+             +" left join eeda_user ul on ur.user_name = ul.user_name "
+             +" left join eeda_office o on ul.office_id = o.id "
+             +" where ul.office_id=? group by ur.user_name" ;
 
-		}else{
-			totalWhere ="select count(1) total from eeda_user_role ur left join eeda_user ul "
-			        + "on ur.user_name = ul.user_name where ul.office_id = " + pom.getCurrentOfficeId();
-			sql = "select ur.user_name,ul.c_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_id from eeda_user_role ur "
-			        + "left join eeda_role r on r.id=ur.role_id "
-			        + "left join eeda_user ul on ur.user_name = ul.user_name "
-			        + "where ul.office_id = " + pom.getCurrentOfficeId() + " and r.office_id = " + parentID + " group by ur.user_name" + sLimit;
-		}
-		// 获取总条数
-       /* String sql = "select ur.user_name,group_concat(r.name separator '<br>') name,ur.remark,ur.role_code from eeda_user_role ur left join role r on r.code=ur.role_code group by ur.user_name" + sLimit;*/
-
-		Record rec = Db.findFirst(totalWhere);	
+		Record rec = Db.findFirst("select count(1) total from ("+sql+") A", office_id);
 		logger.debug("total records:" + rec.getLong("total"));
 		// 获取当前页的数据
-		List<Record> orders = Db.find(sql + sLimit);
+		List<Record> orders = Db.find(sql + sLimit, office_id);
 
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
@@ -95,7 +79,7 @@ public class UserRoleController extends Controller {
 //	@RequiresPermissions(value = {PermissionConstant.PERMSSION_UR_UPDATE})
 	public void edit(){
 		String user_name = getPara("username");
-		setAttr("user_name", user_name);		
+		setAttr("user_name", user_name);
 		render("/eeda/profile/userRole/assigning_roles.html");
 	}
 	
@@ -122,15 +106,9 @@ public class UserRoleController extends Controller {
 		String sql = "";
 		Long parentID = pom.getBelongOffice();
 		//系统管理员
-		if(parentID == null || "".equals(parentID)){
-			sql = "select u.*, ur.role_id from eeda_user u left join eeda_office o on u.office_id = o.id left join "
-			        + "eeda_user_role ur on u.user_name = ur.user_name where ur.role_id is null and (o.id = " + pom.getParentOfficeId() +" or o.belong_office= "+ pom.getParentOfficeId() +")";
-		}else{
-			sql = "select u.*, ur.role_id from eeda_user u left join eeda_office o on u.office_id = o.id left join "
-			        + "eeda_user_role ur on u.user_name = ur.user_name where ur.role_id is null and o.id = " + pom.getCurrentOfficeId();
-		}
+		sql = "select u.*, ur.role_id from eeda_user u left join eeda_user_role ur on u.user_name=ur.user_name where ur.role_id is null and u.office_id=?";
 		
-		List<Record> orders = Db.find(sql);
+		List<Record> orders = Db.find(sql, office_id);
         renderJson(orders);
 	}
 //	@RequiresPermissions(value = {PermissionConstant.PERMSSION_UR_CREATE})
@@ -204,21 +182,15 @@ public class UserRoleController extends Controller {
 			        + getPara("iDisplayLength");
 		}
 
-		String sql = "";
 		
+		String sql = "select r.*, (select count(1) from eeda_user_role ur where ur.role_id = r.id and ur.user_name=?) is_auth "
+		        + "from eeda_role r where r.office_id=?";
 		
-		Long parentID = pom.getBelongOffice();
-		if(parentID == null || "".equals(parentID)){
-			parentID = pom.getParentOfficeId();
-		}
-		Record rec = Db.findFirst("select count(1) total from eeda_role r left join  (select u.user_name,u.role_id from eeda_user_role u where u.user_name =?) ur "
-		        + "on ur.role_id = r.id where r.name != '系统管理员' and (r.office_id is null or r.office_id = ?)", username, parentID);
+		Record rec = Db.findFirst("select count(1) total from ("+sql+") A", username, office_id);
 		logger.debug("total records:" + rec.getLong("total"));
 
 		// 获取当前页的数据
-		List<Record> orders = Db.find("select r.id , r.name, ur.user_name, ur.role_id from eeda_role r left join  "
-		        + " (select u.user_name,u.role_id from eeda_user_role u where u.user_name =?) ur on ur.role_id = r.id where r.name != '系统管理员'"
-		        + " and (r.office_id is null or r.office_id = ?)", username, parentID);
+		List<Record> orders = Db.find(sql, username, office_id);
 		Map orderMap = new HashMap();
 		orderMap.put("sEcho", pageIndex);
 		orderMap.put("iTotalRecords", rec.getLong("total"));
