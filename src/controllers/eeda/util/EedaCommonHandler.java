@@ -16,6 +16,8 @@ import java.util.regex.MatchResult;
 
 import javax.servlet.http.HttpServletRequest;
 
+import models.UserLogin;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 
@@ -566,7 +568,7 @@ public class EedaCommonHandler {
                     continue;
                 String modal_field_default_value_type = ext_type_dto.get("modal_field_default_value_type").toString();
                 String modal_field_default_value = ext_type_dto.get("modal_field_default_value").toString();
-                if(modal_field_default_value_type != null){
+                if(StringUtils.isNotEmpty(modal_field_default_value_type)){
                     if("自动编号".equals(modal_field_default_value_type)){
                         proccessAutoNum(tObj, fieldDefine,
                                 modal_field_default_value);
@@ -574,6 +576,24 @@ public class EedaCommonHandler {
                         String fieldKey = "F"+fieldDefine.get("id")+"_"+fieldDefine.get("field_name").toString();
                         tObj.colName += ","+fieldKey;
                         tObj.colValue+= ",'"+ext_type_dto.get("modal_field_default_value_text")+"'";
+                    }else if("系统内置".equals(modal_field_default_value_type)){
+                        Record settingRec = Db.findFirst("select * from eeda_setting where id=?", modal_field_default_value);
+                        String settingName = settingRec.getStr("name");
+                        String colValue = "";
+                        if("当前用户姓名".equals(settingName)){
+                            colValue = "'"+UserLogin.getCurrentUser().getStr("c_name")+"'";
+                        }else if("当前日期时间".equals(settingName)){
+                            colValue = " now() ";
+                        }else if("当前日期".equals(settingName)){
+                            colValue = " DATE_FORMAT(NOW(),'%Y-%m-%d')";
+                        }else if("当前用户登录账号".equals(settingName)){
+                            colValue = "'"+UserLogin.getCurrentUser().getStr("user_name")+"'";
+                        }
+                        
+                        
+                        String fieldKey = "F"+fieldDefine.get("id")+"_"+fieldDefine.get("field_name").toString();
+                        tObj.colName += ","+fieldKey;
+                        tObj.colValue+= ","+colValue;
                     }
                 }
             }

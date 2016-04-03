@@ -197,7 +197,7 @@ public class DbUtils {
                 String modelClassName = key.substring(0, key.indexOf("_list"));
                 try {
                     List<Map<String, String>> itemList = (ArrayList<Map<String, String>>)dto.get(key);
-                    Class c = Class.forName("models.yh.structure."+StringUtils.capitalize(modelClassName));
+                    Class c = Class.forName("models.eeda.structure."+StringUtils.capitalize(modelClassName));
                    
                     Map<String, String> master_ref= new HashMap<String, String>();
                     master_ref.put("structure_id", model.get("id").toString());

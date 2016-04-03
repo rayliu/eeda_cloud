@@ -1,4 +1,4 @@
-define(['template', 'datetimepicker_CN'],function () {
+define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event'],function (t, dp, btnController, eventController) {
 	$.ajaxSetup({
 		async : false
 	});
@@ -82,7 +82,7 @@ define(['template', 'datetimepicker_CN'],function () {
 	                label: field.FIELD_DISPLAY_NAME,
 	                is_require: field.REQUIRED
 	            });
-	        }	
+	        }
 
 	        field_section.append(field_html);
 	    }
@@ -123,7 +123,7 @@ define(['template', 'datetimepicker_CN'],function () {
 	            var col_item = {
 	                data: 'F' + field.ID + '_' +field.FIELD_NAME
 	            };
-	            if (field.FIELD_TYPE == '下拉列表' 
+	            if (field.FIELD_TYPE == '下拉列表'
 	                && (field.FIELD_TYPE_EXT_TYPE =='客户列表' || field.FIELD_TYPE_EXT_TYPE =='供应商列表')
 	            ){
 	                col_item = {
@@ -194,7 +194,7 @@ define(['template', 'datetimepicker_CN'],function () {
 		            });
 	            });
             }
-			
+
 			var html='<ul id="'+el.attr('name')+'_list" tabindex="-1" '+
 			    	'class=" dropdown-menu  dropdown-scroll" '+
 			    	'style="top: 22%; left: 33%; width: 50%;">'+
@@ -203,7 +203,7 @@ define(['template', 'datetimepicker_CN'],function () {
 		    var dropdownList=$('#'+el.attr('name')+'_list');
 
 		    function in_array(search, array){
-		    	
+
 			    for(var i in array){
 			    	var field_key = 'F'+array[i].ID+'_'+array[i].FIELD_NAME;
 			        if(field_key==search){
@@ -230,7 +230,7 @@ define(['template', 'datetimepicker_CN'],function () {
 
 						dropdownList.append('<li><a tabindex="-1" class="li_item" id="'+item.ID+'">'+li_str+'</a></li>')
 					});
-					
+
 				});
 		    };
 
@@ -241,10 +241,10 @@ define(['template', 'datetimepicker_CN'],function () {
 		    	searchData();
 		    });
 
-		    
-		    dropdownList.css({ 
-		    	left:el.position().left+"px", 
-		    	top: el.position().top+31+"px" 
+
+		    dropdownList.css({
+		    	left:el.position().left+"px",
+		    	top: el.position().top+31+"px"
 		    }).show();
 
 		    dropdownList.on('click', '.li_item', function(e){
@@ -280,7 +280,7 @@ define(['template', 'datetimepicker_CN'],function () {
 		});
 	};
 
-	
+
 
 	var checkHaveDetailTable = function(order_structure_dto, structure){
 	    var structure_id = structure.ID;
@@ -304,7 +304,6 @@ define(['template', 'datetimepicker_CN'],function () {
 	    }
 	    return false;
 	}
-
 
 //---------------------------return ---------------------------
     return {
@@ -334,7 +333,7 @@ define(['template', 'datetimepicker_CN'],function () {
 		            generateTable(json, structure);
 		        }
 		    } //end of for
-		    bindEvent(json);
+		    eventController.bindEvent(json);
 		},
     	buildFieldsStructureUI: function(order_data_dto) {
 		    for (var i = 0; i < order_data_dto.STRUCTURE_LIST.length; i++) {
@@ -386,7 +385,7 @@ define(['template', 'datetimepicker_CN'],function () {
 		    $('#button-bar').empty();
 
 		    structure_json.id = $("#order_id").val();
-		    
+
 		    $.post('/m_getOrderData', {
 		            params: JSON.stringify(structure_json)
 		        },
@@ -409,7 +408,7 @@ define(['template', 'datetimepicker_CN'],function () {
 		            // $('[data-toggle=tooltip]').tooltip();
 		        }, 'json');
 		},
-		
+
 		checkHaveDetailTable: checkHaveDetailTable
     };//end of return
 

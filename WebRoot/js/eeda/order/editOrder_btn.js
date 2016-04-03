@@ -3,7 +3,7 @@ define(['app/eeda-common', './orderController'], function(eeda, orderController)
     //var editOrderController = require('./editOrder');
 
     var global_order_structure;
-    
+
     var buildButtonUI = function(module, order_dto) {
         //$('#button-bar').empty();
         for (var i = 0; i < module.ACTION_LIST.length; i++) {
@@ -19,7 +19,7 @@ define(['app/eeda-common', './orderController'], function(eeda, orderController)
                 }else{
                     is_show = false;
                 }
-                
+
             }else{
                 if(buttonObj.IS_AUTH=='N'){
                     is_show = false;
@@ -118,7 +118,7 @@ define(['app/eeda-common', './orderController'], function(eeda, orderController)
             var parent_structure = orderController.getStructure(global_order_structure, parent_structure_id);
 
             var is_3rd_table = $(table).attr('is_3rd_table') == 'true';
-            
+
             var table_rows = $(table).find('tr');
             var row_list = [];
 
@@ -236,7 +236,15 @@ define(['app/eeda-common', './orderController'], function(eeda, orderController)
                     var structure_json_str = $('#module_structure').val();
                     var structure_json = JSON.parse(structure_json_str);
                     structure_json.id = order.ID;
-                    orderController.fillOrderData(structure_json);
+
+                    //TODO:  这里跟editOrder.js 中重复了,看看如何优化?
+                    var commonHandle=function(){
+                        buildButtonUI(global_order_structure);
+                        bindBtnClick(); //绑定按钮事件
+                        eventController.bindEvent();
+                        $('[data-toggle=tooltip]').tooltip();
+                    };
+                    orderController.fillOrderData(structure_json, commonHandle);
 
                     $('#saveBtn').attr('disabled', false);
                 } else {
@@ -268,7 +276,7 @@ define(['app/eeda-common', './orderController'], function(eeda, orderController)
         return fiedl_value;
     };
 
-    
+
 
     return {
         global_order_structure: {},
