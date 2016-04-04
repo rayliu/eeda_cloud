@@ -28,7 +28,7 @@ define(function(){
         },
         //"ajax": "/damageOrder/list",
         "columns": [
-            { "width": "30px", "orderable":false, 
+            { "width": "30px", "orderable":false,
                 "render": function ( data, type, full, meta ) {
                     if(full.LEVEL == 'default'){
                         return '';
@@ -76,10 +76,10 @@ define(function(){
                                 continue;
 
                             var command_setting_str = JSON.stringify(command);
-                            
+
                             if(!command_setting_str)
                             	continue;
-                            
+
                             html_detail = html_detail + '<li style="margin-top: 5px;">'
                             +'    <a class="remove delete_command" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>&nbsp;'
                             +'    <strong style="color: green;" name="command_name">' + command.COMMAND_NAME + '</strong> ...'
@@ -104,7 +104,7 @@ define(function(){
     $event_table.on('click', '.add_command', function(e){
         e.preventDefault();
         //$('#actionModal').modal('show');
-        var html = template('module_event_command_template', 
+        var html = template('module_event_command_template',
                         {
                             id: 'sub'
                         }
@@ -126,11 +126,11 @@ define(function(){
 
         $('#editEventCommandModal').modal('show');
 
-        
+
         $('#editEventCommandModal [name=modal_row_id]').val(row_id);
         $('#editEventCommandModal [name=modal_command_li_index]').val(li.index());
 
-       
+
         $('#editEventCommandModal [name=table_list]').empty();
         var modal_form = $('#editEventCommandModal #modalForm');
         var command_json = li.find('input[name=eventCommandJson]').val();
@@ -143,10 +143,10 @@ define(function(){
 
             var fieldSetRow = $('#editEventCommandModal #modal_add_field_div .row');
             fieldSetRow.empty();
-            
+
             var setValueList = commandObj.SETVALUELIST;
             $.each(setValueList, function(i, item){
-                var html = template('editEventCommandModal_add_field_template', 
+                var html = template('editEventCommandModal_add_field_template',
                     {
                         field_value: item.EXP
                     }
@@ -213,7 +213,7 @@ define(function(){
                 }
             };
 
-            html = template('editEventCommandModal_add_field_template', 
+            html = template('editEventCommandModal_add_field_template',
                     {
                         field_list: orderFieldList
                     }
@@ -221,13 +221,13 @@ define(function(){
         }else{
             var orderFieldList = getModuleFields();
 
-            html = template('editEventCommandModal_add_field_template', 
+            html = template('editEventCommandModal_add_field_template',
                     {
                         field_list: orderFieldList
                     }
                 );
         }
-        
+
         $(this).parent().parent().find('.row').append(html);
     });
 
@@ -259,7 +259,7 @@ define(function(){
             }
             setValueList.push(obj);
         }
-        
+
         var json_obj = {
             COMMAND_NAME: command_name,
             CONDITION: {EXP:condition, EXP_KEY:""},
@@ -273,7 +273,7 @@ define(function(){
         var command_json_input = $(tr).find('td.event_script ol li:eq(' +row_command_li_index+') input[name=eventCommandJson]');
 
         command_name_text.text(command_name);
-     
+
         command_json_input.val(JSON.stringify(json_obj));
 
         $('#editEventCommandModal').modal('hide');
@@ -284,7 +284,9 @@ define(function(){
         var items_array=[];
         for(var index=0; index<table_rows.length; index++){
             var row = table_rows[index];
-
+            if($(row).find('td').text() == '表中数据为空')
+                continue;
+                
             var id = $(row).attr('id');
             if(!id){
                 id='';
@@ -302,7 +304,7 @@ define(function(){
 
             var item={
                 id: id,
-                event_name: event_name, 
+                event_name: event_name,
                 event_type: event_type,
                 event_script: event_script_arr
             };

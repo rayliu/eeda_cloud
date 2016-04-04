@@ -4,13 +4,13 @@
 		    <label class="search-label">{{label}}
 		    {{if is_require=='Y'}} <span style='color:red;display: inherit;'>*</span> {{/if}}
 		    </label>
-		    <input type="text" 
+		    <input type="text"
 		    	id="{{id}}"
 		    	name="{{id}}"
 		    	field_type="{{field_type}}"
-				class="form-control search-control" 
-				{{disabled}} 
-				placeholder="{{placeholder}}" 
+				class="form-control search-control"
+				{{disabled}}
+				placeholder="{{placeholder}}"
 				value="{{value}}"
 				>
 		</div>

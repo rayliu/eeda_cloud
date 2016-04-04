@@ -14,7 +14,9 @@ import com.google.gson.reflect.TypeToken;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 
+import controllers.eeda.ModuleController;
 import controllers.eeda.report.Printer;
+import controllers.eeda.sms.SendCloudSmsApi;
 
 /**
  * //action处理：针对 保存，审核，撤销 等按钮动作做相应的打印 或 赋值
@@ -52,20 +54,51 @@ public class EedaBtnActionHandler {
             List setValueList = (List)commandDto.get("setValueList");
             
             if("打印".equals(action)){
-                String templateName = commandDto.get("print_template").toString();
-                Record printTemplateRec = Db.findFirst("select * from eeda_print_template where name=?", templateName);
-                if(printTemplateRec !=null){
-                    String filePath = printTemplateRec.getStr("file_path");
-                    HashMap<String, Object> params = new HashMap<String, Object>();
-                    params.put("orderId", new Integer(orderId));
-                    String outputFileName = Printer.getInstance().print(filePath, templateName, params);
-                    returnStr = outputFileName;
-                }
-            }else{
-                
+                returnStr = handlePrint(orderId, returnStr, commandDto);
+            }else if("发送短信".equals(action)){
+                returnStr = handleSms(orderId, gson, commandDto);
             }
             
             //processCondition(orderId, commandDto, condition, moduleId);
+        }
+        return returnStr;
+    }
+
+    private static String handleSms(String orderId, Gson gson,
+            Map<String, ?> commandDto) {
+        String smsStr = commandDto.get("sms_setting").toString();
+        Map<String, ?> smsDto = gson.fromJson(smsStr, HashMap.class);
+        String smsUser = smsDto.get("sms_user").toString();
+        String smsKey = smsDto.get("sms_pwd").toString();
+        String smsID = smsDto.get("sms_body").toString();
+        String smsPhoneNo = smsDto.get("sms_phone_no").toString();
+        String structureName = smsUser.split("[.]")[0];
+        Record structureRec = ModuleController.getStructureByName(structureName);
+        
+        String smsUserField = ModuleController.getFieldSqlNameByName(smsUser);
+        String smsKeyField = ModuleController.getFieldSqlNameByName(smsKey);
+        String smsIDField = ModuleController.getFieldSqlNameByName(smsID);
+        String smsPhoneNoField = ModuleController.getFieldSqlNameByName(smsPhoneNo);
+        
+        Record rec = Db.findFirst("select * from t_"+structureRec.getLong("id")+" where id=?", orderId);
+        String smsUserValue = rec.get(smsUserField).toString();
+        String smsKeyValue = rec.get(smsKeyField).toString();
+        String smsIdValue = rec.get(smsIDField).toString();
+        String smsPhoneNoValue = rec.get(smsPhoneNoField).toString();
+        
+        return SendCloudSmsApi.sendMsg(smsUserValue, smsKeyValue, smsIdValue, smsPhoneNoValue);
+    }
+
+    private static String handlePrint(String orderId, String returnStr,
+            Map<String, ?> commandDto) {
+        String templateName = commandDto.get("print_template").toString();
+        Record printTemplateRec = Db.findFirst("select * from eeda_print_template where name=?", templateName);
+        if(printTemplateRec !=null){
+            String filePath = printTemplateRec.getStr("file_path");
+            HashMap<String, Object> params = new HashMap<String, Object>();
+            params.put("orderId", new Integer(orderId));
+            String outputFileName = Printer.getInstance().print(filePath, templateName, params);
+            returnStr = outputFileName;
         }
         return returnStr;
     }

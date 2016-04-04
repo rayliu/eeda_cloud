@@ -23,22 +23,56 @@
                             <select class="form-control" name="action" style="display: initial;width: initial;">
                                 <option>更新</option>
                                 <option>打印</option>
+                                <option>发送短信</option>
+                                <option>发送邮件</option>
                             </select>
-                            
-
                         </div>
-                        <div id="modal_add_field_div" class="form-group">
+                        <div id="modal_print_setting_div" class="form-group" style="display: none;">
                             <label class="control-label" for="inputSuccess">PDF模板名: (打印设置请联系技术人员)</label>
                             <input name="print_template" class="form-control" type="text">
                         </div>
-                        <label class="control-label" for="inputSuccess">字段赋值&nbsp;&nbsp;<button name="addField" type="button" class="addColField btn btn-success btn-xs">添加</button></label>
-                        <section class='well'>
-                            <div class="form-group">
-                                <div class="row">
+                        <div id="sms_setting_div" style="display: none;">
+                          <label class="control-label" for="inputSuccess">短信字段赋值&nbsp;&nbsp;</label>
+                          <section class='well'>
+                              <div class="form-group">
+                                  <div class="row">
+                                    <label class="control-label" for="inputSuccess">用户名</label>
+                                    <input name="sms_user" class="form-control" type="text">
+                                    <label class="control-label" for="inputSuccess">密码</label>
+                                    <input name="sms_pwd" class="form-control" type="text">
+                                    <label class="control-label" for="inputSuccess">发送内容</label>
+                                    <input name="sms_body" class="form-control" type="text">
+                                    <label class="control-label" for="inputSuccess">手机号码</label>
+                                    <input name="sms_phone_no" class="form-control" type="text">
+                                  </div>
+                              </div>
+                          </section>
+                        </div>
+                        <div id="email_setting_div" style="display: none;">
+                          <label class="control-label" for="inputSuccess">邮件字段赋值&nbsp;&nbsp;</label>
+                          <section class='well'>
+                              <div class="form-group">
+                                  <div class="row">
+                                    <label class="control-label" for="inputSuccess">用户名</label>
+                                    <input name="email_user" class="form-control" type="text">
+                                    <label class="control-label" for="inputSuccess">密码</label>
+                                    <input name="email_pwd" class="form-control" type="text">
+                                    <label class="control-label" for="inputSuccess">发送内容</label>
+                                    <input name="email_body" class="form-control" type="text">
+                                  </div>
+                              </div>
+                          </section>
+                        </div>
+                        <div id="field_setting_div">
+                          <label class="control-label" for="inputSuccess">字段赋值&nbsp;&nbsp;<button name="addField" type="button" class="addColField btn btn-success btn-xs">添加</button></label>
+                          <section class='well'>
+                              <div class="form-group">
+                                  <div class="row">
 
-                                </div>
-                            </div>
-                        </section> 
+                                  </div>
+                              </div>
+                          </section>
+                        </div>
                     </div>
                     <div id="modal_field_type_pop_div" class="form-group" style="display: none;">
                         <label class="control-label" for="inputSuccess">弹出列表高级设定</label>
@@ -76,16 +110,16 @@
             <a class="delete" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>
             <input class="form-control" type="text" name="field_value" style="display: initial;width: 50%;" value="{{field_value}}">
         </div>
-    
+
 </script>
 
 <script id="module_action_command_template" type="text/html">
-    <li style="margin-top: 5px;">    
+    <li style="margin-top: 5px;">
         <a class="remove delete_command" href="javascript:void(0)" title="删除">
             <i class="glyphicon glyphicon-remove"></i>
-        </a>&nbsp;    
-        当条件 (<strong style="color: green;" name="condition"></strong>) 成立时执行...    
-        <a name="btnCommandSetting" style="cursor: pointer;"><i class="fa fa-edit"></i></a>    
+        </a>&nbsp;
+        <strong style="color: green;" name="command_name">空</strong>...
+        <a name="btnCommandSetting" style="cursor: pointer;"><i class="fa fa-edit"></i></a>
         <input name="actionCommandJson" type="hidden">
     </li>
 </script>

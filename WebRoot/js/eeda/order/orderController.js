@@ -34,6 +34,12 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	                label: field.FIELD_DISPLAY_NAME,
 	                is_require: field.REQUIRED
 	            });
+	        } else if (field.FIELD_TYPE == '多行文本编辑框') {
+	            field_html = template('textarea_field', {
+	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
+	                label: field.FIELD_DISPLAY_NAME,
+	                is_require: field.REQUIRED
+	            });
 	        } else if (field.FIELD_TYPE == '日期编辑框') {
 	            field_html = template('input_date_field_template', {
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,

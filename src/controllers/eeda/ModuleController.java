@@ -627,6 +627,12 @@ public class ModuleController extends Controller {
         return field;
     }
     
+    public static String getFieldSqlNameByName(String name){
+        Record rec = getFieldByName(name);
+        String str = "f"+rec.getLong("id")+"_"+rec.getStr("field_name");
+        return str;
+    }
+    
     public void getRoleList(){
         List<Record> recs = Db.find("select * from eeda_role where office_id=?", office_id);
         renderJson(recs);

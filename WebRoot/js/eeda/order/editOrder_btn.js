@@ -1,4 +1,4 @@
-define(['app/eeda-common', './orderController'], function(eeda, orderController){
+define(['app/eeda-common', './orderController', './editOrder_event'], function(eeda, orderController, eventController){
     var template = require('template');
     //var editOrderController = require('./editOrder');
 
@@ -102,6 +102,15 @@ define(['app/eeda-common', './orderController'], function(eeda, orderController)
                 for (var l = 0; l < fields_select.length; l++) { //遍历当前行的所有fields_select
                     var field = fields_select[l];
                     fields_obj[$(field).attr('name')] = $(field).val();
+                }
+            }
+            var fields_textarea = $(field_section).find('textarea');
+            if (fields_textarea.length > 0) {
+                for (var l = 0; l < fields_textarea.length; l++) { //遍历当前行的所有textarea
+                    var field = fields_textarea[l];
+                    if ($(field).attr('name') && $(field).val() != '') {
+                        fields_obj[$(field).attr('name')] = $(field).val();
+                    }
                 }
             }
             fields_list.push(fields_obj);
@@ -226,10 +235,13 @@ define(['app/eeda-common', './orderController'], function(eeda, orderController)
                         console.log(pdf_path);
                         window.open(pdf_path, 'download');
                         return;//no need to refresh UI
+                    }else if(order.RETURN_STR=='smsFailed'){
+                        $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
+                        return;
                     }
 
                     $('#order_id').val(order.ID);
-                    $.scojs_message('保存成功', $.scojs_message.TYPE_OK);
+                    $.scojs_message('操作成功', $.scojs_message.TYPE_OK);
 
                     eeda.urlAfterSave($("#module_id").val(), order.ID);
                     //重新取一次数据渲染页面
@@ -248,11 +260,11 @@ define(['app/eeda-common', './orderController'], function(eeda, orderController)
 
                     $('#saveBtn').attr('disabled', false);
                 } else {
-                    $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+                    $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
                     $('#saveBtn').attr('disabled', false);
                 }
             }, 'json').fail(function() {
-                $.scojs_message('保存失败', $.scojs_message.TYPE_ERROR);
+                $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
                 $('#saveBtn').attr('disabled', false);
             });
         });
