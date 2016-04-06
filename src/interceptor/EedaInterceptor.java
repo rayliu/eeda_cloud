@@ -89,11 +89,10 @@ public class EedaInterceptor implements Interceptor{
 			}
 			
 			Long office_id = user.getLong("office_id");//总公司office_id
-			UserOffice uo = UserOffice.dao.findFirst("select * from user_office where office_id =?", office_id);
-	        if(uo != null){
-	            Office office = Office.dao.findById(uo.get("office_id"));
-	            ai.getController().setAttr("office_name", office.get("office_name"));
-	        }
+			
+            Office office = Office.dao.findById(office_id);
+            ai.getController().setAttr("office_name", office.get("office_name"));
+	        
 	        
 			ai.getController().setAttr("user_login_id", currentUser.getPrincipal());
 			ai.getController().setAttr("permissionMap", ai.getController().getSessionAttr("permissionMap"));
