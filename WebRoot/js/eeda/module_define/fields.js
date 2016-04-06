@@ -4,7 +4,7 @@
     sco: save success/err msg
 
  */
-define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_add_btn_type'], 
+define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_add_btn_type'],
     function(jquery_ui, sco, w2ui, actionController, eventController, authContr, fieldAddBtnContr){
 
     var template = require('template');
@@ -14,7 +14,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
     //直接使用actionController 在saveAction()中是访问不到的，原因 ？？
     var buildActionArray = actionController.buildActionArray;
     var buildEventArray = eventController.buildEventArray;
-    
+
 	document.title = '模块定义 | '+document.title;
     $('#menu_sys_dev').addClass('active').find('ul').addClass('in');
     $('[data-toggle=tooltip]').tooltip();
@@ -29,8 +29,8 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             structure_names.push($(s_names[i]).val());
         }
 
-        var html = template('table_template', 
-            {s_name: 'sub'+subIndex, 
+        var html = template('table_template',
+            {s_name: 'sub'+subIndex,
              structure_names: structure_names,
              s_type:'字段'
             });
@@ -38,7 +38,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         $('#fields_body table:last').DataTable(tableSetting);
 
         subIndex++;
-        
+
         bindFieldTableEvent();
     });
 
@@ -126,14 +126,14 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                     return  '<div class="form-group input-group" style="    padding-top: 4px;">'+
                             '    <input type="text" class="form-control field_type" disabled value="'+data+'">'+
                             '    <span class="input-group-addon" style="color:#428bca;cursor: pointer;"><i class="glyphicon glyphicon-edit"></i></span>'
-                            '</div>';   
+                            '</div>';
                 }
             },
             // { "data": "FIELD_RULE", "width": "80px",
             //     "render": function ( data, type, full, meta ) {
             //         if(!data)
             //             data='';
-                    
+
             //         return  '<div class="form-group input-group">'+
             //                 '    <input type="text" class="form-control">'+
             //                 '    <span class="input-group-addon">.00</span>'
@@ -174,7 +174,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                         +'   <option '+(data=='Y'?'selected':'')+'>Y</option>'
                         +'</select>';
                 }
-            }, 
+            },
             { "data": "LISTED",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
@@ -218,8 +218,8 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         if(!field_type_ext){
             $.each(fields, function(i, item){
                 var rec={
-                    "recid": i+1, 
-                    "name": $(item).val(), 
+                    "recid": i+1,
+                    "name": $(item).val(),
                     "exp": ""
                 };
                 records.push(rec);
@@ -227,14 +227,14 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         }else{
             records = field_type_ext.assignment_list;
         }
-        
-        
+
+
 
         if(w2ui.hasOwnProperty('modal_field_grid')){
              w2ui['modal_field_grid'].destroy();
         }
 
-        $('#modal_field_grid').w2grid({ 
+        $('#modal_field_grid').w2grid({
             name: 'modal_field_grid',
             columns: [
                 { field: 'name', caption: '字段<br>', size: '30%' },
@@ -243,7 +243,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             records:records
         });
 
-        
+
     };
     //等页面组件装载完成后，再绑定事件
     var bindFieldTableEvent= function(){
@@ -273,6 +273,8 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 
             $("#modal_field_name").val($(tr.children[1]).find('input').val());
             var field_type = $(tr.children[2]).find('input').val();
+            if(field_type == '')
+                field_type='文本编辑框';
             $("#modal_field_type").val(field_type);
 
             var ext_type=$(tr).find('input.ext_type').val();
@@ -283,9 +285,11 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                     $("#modal_field_type_ext_div").show();
                 }else if('数据列表' == field_type){
 
-                    loadDataGridList(field_type_ext, this); 
+                    loadDataGridList(field_type_ext, this);
                 }
-
+                if(field_type_ext.enter_next_line){
+                    $('#modal_field_enter_next_line').prop('checked', true);
+                }
                 if(field_type_ext.modal_field_default_value_type){
                     $("#modal_field_default_value_type").val(field_type_ext.modal_field_default_value_type)
                     if('系统内置' == field_type_ext.modal_field_default_value_type){
@@ -305,7 +309,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             }
 
             $("#editField").modal('show');
-            
+
         });
 
         //删除表中一行
@@ -429,9 +433,9 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             $("#modal_field_default_value_text").css('display', 'inline');
         }
     });
-    
 
-    
+
+
     //对话框关闭，填值到列表中
     $('#modalFormOkBtn').click(function(){
         var row_id = $('#modal_row_id').val();
@@ -439,7 +443,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 
         var field_type=$("#modal_field_type").val()
         $(tr).find('input.field_type').val(field_type);
-
+        var enter_next_line = $('#modal_field_enter_next_line').prop('checked');
         if('下拉列表'== field_type|| '数据列表' == field_type){
             var field_type_ext={
                 id: $("#modal_field_type_ext_type").val(),
@@ -449,6 +453,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             $(tr).find('input.ext_type').val(JSON.stringify(field_type_ext));
         }else{
             var field_type_ext={
+                enter_next_line: enter_next_line,
                 modal_field_default_value_type: $("#modal_field_default_value_type").val(),
                 modal_field_default_value: $("#modal_field_default_value").val(),
                 modal_field_default_value_text: $("#modal_field_default_value_text").val(),
@@ -456,7 +461,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             $(tr).find('input.ext_type').val(JSON.stringify(field_type_ext));
         }
 
-        
+
         $(tr).find('textarea.ext_text').text($("#modal_field_type_ext_text").val());
 
         $("#editField").modal('hide');
@@ -479,8 +484,8 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 
             var item={
                 id: id,
-                //field_name: $(row.children[2]).find('input').val(), 
-                field_display_name: $(row).find('input.field_display_name').val(), 
+                //field_name: $(row.children[2]).find('input').val(),
+                field_display_name: $(row).find('input.field_display_name').val(),
                 field_type: $(row).find('input.field_type').val(),
                 field_type_ext_type:$(row).find('input.ext_type').val(),//取自行隐藏字段
                 // field_type_ext_text:$(row).find('textarea.ext_text').val(),
@@ -581,10 +586,10 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 
             var item={
                 id: id,
-                role_id: $(row).find('select.role_id').val(), 
+                role_id: $(row).find('select.role_id').val(),
                 role_auth_list: btn_id_list,
             };
-           
+
             items_array.push(item);
         });
 
@@ -602,7 +607,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
     };
 
     var saveAction=function(btn, is_start){
-        is_start = is_start || false; 
+        is_start = is_start || false;
         var structure_list=buildStructureTableArray();
         var action_list= buildActionArray();
         var event_list = buildEventArray();
@@ -684,7 +689,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 
                 for (var i = 0; i < json.STRUCTURE_LIST.length; i++) {
                     var structure = json.STRUCTURE_LIST[i];
-                    var html = template('table_template', 
+                    var html = template('table_template',
                         {
                             id: 'sub'+subIndex,
                             s_id: structure.ID,
@@ -705,7 +710,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 
                     if(!structure.FIELDS_LIST)
                         return;
-                    
+
 
                     for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
                         var field = structure.FIELDS_LIST[j];
@@ -794,5 +799,5 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         showModuleDetail: showModuleDetail
     };
 
-    
+
 });
