@@ -6,6 +6,7 @@ define(function(){
     });
 
     var role_list_html;//提前获取rolelist
+    var role_list=[];
     var generateRoleList=function(default_val){
         // if(role_list_html)
         //     return role_list_html;
@@ -18,7 +19,15 @@ define(function(){
                 '</select>';
         var render = template.compile(role_list_template);
 
-        var role_list=[];
+
+
+        if(role_list.length>0){
+            var html = render({
+                default_val: default_val,
+                list: role_list
+            });
+            return html;
+        }
 
         $.post('/module/getRoleList', function(data){
             if(data){
@@ -80,7 +89,7 @@ define(function(){
         },
         //"ajax": "/damageOrder/list",
         "columns": [
-            { "width": "5%", "orderable":false, 
+            { "width": "5%", "orderable":false,
                 "render": function ( data, type, full, meta ) {
                     if(full.LEVEL == 'default'){
                         return '';
@@ -130,7 +139,7 @@ define(function(){
             }
 
             var item={
-                id: id, 
+                id: id,
                 name: name,
                 checked: checked
             };
@@ -152,7 +161,7 @@ define(function(){
     $auth_table.on('click', '.add_command', function(e){
         e.preventDefault();
         //$('#actionModal').modal('show');
-        var html = template('module_action_command_template', 
+        var html = template('module_action_command_template',
                         {
                             id: 'sub'
                         }
@@ -209,7 +218,7 @@ define(function(){
                     for(var key in field){
                         var display_name = key.split(',')[2].split(':')[1];
                         var value = field[key];
-                        var html = template('editEventCommandModal', 
+                        var html = template('editEventCommandModal',
                             {
                                 field_list: orderFieldList,
                                 display_name: display_name,
@@ -228,7 +237,7 @@ define(function(){
                     for(var key in field){
                         var display_name = key.split(',')[2].split(':')[1];
                         var value = field[key];
-                        var html = template('editEventCommandModal', 
+                        var html = template('editEventCommandModal',
                             {
                                 field_list: orderFieldList,
                                 display_name: display_name,
@@ -240,7 +249,7 @@ define(function(){
                 }
             }
 
-            
+
         }
     });
 
@@ -295,9 +304,9 @@ define(function(){
             var col_index= 1;
             var item={
                 id: id,
-                //field_name: $(row.children[2]).find('input').val(), 
+                //field_name: $(row.children[2]).find('input').val(),
                 level: level,
-                action_name: $(row.children[col_index]).find('input').val(), 
+                action_name: $(row.children[col_index]).find('input').val(),
                 action_type: $(row.children[col_index+1]).find('select').val(),
                 ui_type: $(row.children[col_index+2]).find('select').val(),
                 btn_visible_condition: buildBtnVisibleConditionArray($(row.children[col_index+3])),
