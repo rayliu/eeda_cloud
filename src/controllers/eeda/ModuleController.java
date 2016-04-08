@@ -50,6 +50,8 @@ public class ModuleController extends Controller {
     ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     
     public void index() {
+        List<Record> viewsRecs = Db.find("select * from eeda_sql_views where office_id=?", office_id);
+        setAttr("sqlViews", viewsRecs);
         render("/eeda/profile/module/moduleList.html");
     }
     
@@ -226,6 +228,9 @@ public class ModuleController extends Controller {
         //auth
         authHandle(dto, module_id);
         
+        //customize search
+        searchHandle(dto, module_id);
+        
         Object is_start = dto.get("is_start");//是否启用？
         if((Boolean)is_start){
             activateModule(module_id);
@@ -243,6 +248,22 @@ public class ModuleController extends Controller {
         renderJson(orderDto);
     }
 
+    private void searchHandle(Map<String, ?> dto, String module_id) {
+        String searchStr = (String)dto.get("search_obj");
+        Map<String, ?> searchDto= new Gson().fromJson(searchStr, HashMap.class);
+        String viewName = searchDto.get("view_name").toString();
+        if(StringUtils.isEmpty(viewName)){
+            Db.update("delete from eeda_module_customize_search where module_id=?", module_id);
+            return;
+        }
+        Record module = Db.findFirst("select * from eeda_module_customize_search where module_id=?", module_id);
+        if(module ==null){
+            Db.update("insert into eeda_module_customize_search(module_id, setting_json) values(?, ?)", module_id, searchStr);
+        }else{
+            Db.update("update eeda_module_customize_search set setting_json=? where module_id=?", searchStr, module_id);
+        }
+        
+    }
     private void eventHandle(Map<String, ?> dto, String module_id) {
         List<Map<String, ?>> event_list = (ArrayList<Map<String, ?>>)dto.get("event_list");
         if(event_list.size() ==0)
@@ -382,6 +403,7 @@ public class ModuleController extends Controller {
         List<Record> action_list = getActionList(module_id);
         List<Record> event_list = getEventList(module_id);
         List<Record> auth_list = getAuthList(module_id);
+        String search_obj = getSearchObj(module_id);
         
         Record rec = new Record();
         rec.set("module_id", module_id);
@@ -391,7 +413,17 @@ public class ModuleController extends Controller {
         rec.set("action_list", action_list);
         rec.set("event_list", event_list);
         rec.set("auth_list", auth_list);
+        rec.set("search_obj", search_obj);
         return rec;
+    }
+    
+    private String getSearchObj(String module_id){
+        Record rec = Db.findFirst("select * from eeda_module_customize_search where module_id=?", module_id);
+        String returnStr="";
+        if(rec!=null){
+            returnStr = rec.getStr("setting_json");
+        }
+        return returnStr;
     }
 
     private List<Record> getActionList(String module_id) {
@@ -681,5 +713,20 @@ public class ModuleController extends Controller {
         dto.set("condition_list", conditionList);
         dto.set("col_list", colList);
         return dto;
+    }
+    
+    public void getCustomizeView(){
+        String viewName = getPara("name");
+        Record rec = Db.findFirst("select * from eeda_sql_views where name=?", viewName);
+        if(rec!=null){
+            String sqlViewName = rec.getStr("sql_name");
+            Record viewRec = Db.findFirst("select * from "+sqlViewName+" where id=1");
+            String[] cols = viewRec.getColumnNames();
+//            Record colsRec = new Record();
+//            colsRec.set("colArr", cols);
+            renderJson(cols);
+        }else{
+            renderJson(Collections.EMPTY_LIST);
+        }
     }
 }

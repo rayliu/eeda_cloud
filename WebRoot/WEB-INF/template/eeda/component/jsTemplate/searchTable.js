@@ -42,7 +42,7 @@
                 $(row).append('<input type="hidden" name="id" value="' + id + '"/>');
             },
             "columns": [
-                { "width": "10px", "orderable":false, 
+                { "width": "10px", "orderable":false,
                     "render": function ( data, type, full, meta ) {
                         var isEditable=false, isDelete=false;
                         {{if isEditable}}
@@ -67,21 +67,26 @@
                         {{if (field.FIELD_TYPE == '下拉列表' ) }}
                             // var ext_type_json='{{field.FIELD_TYPE_EXT_TYPE}}';
                             // var ext_type=$.parseJSON(ext_type_json);
-                            
+
                             { "data": "F{{field.ID}}_{{field.FIELD_NAME}}_INPUT",
                                 "render": function ( data, type, full, meta ) {
                                     if(!data)
                                         data = '';
                                     return data;
-                               } 
+                               }
                             },
                         {{else}}
-                            { "data": "F{{field.ID}}_{{field.FIELD_NAME}}",
+                            { "data":
+                                {{if (field.ID !=null)}}
+                                    "F{{field.ID}}_{{field.FIELD_NAME}}",
+                                {{else}}
+                                    "{{field.FIELD_NAME}}",
+                                {{/if}}
                                 "render": function ( data, type, full, meta ) {
                                     if(!data)
                                         data = '';
                                     return data;
-                               } 
+                               }
                             },
                         {{/if}}
                     {{/if}}

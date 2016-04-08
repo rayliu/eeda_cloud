@@ -65,31 +65,87 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (da
         return isEditable;
     };
 
+    var buildCustomizeSearchUI = function(field_list){
+        $.each(field_list, function(i, field){
+            var field_html = '';
+            if(field.AS_CONDITION == 'N')
+                return true;
+
+            if(field.FIELD_TYPE == '文本'){
+                field_html = template('input_field',
+                    {
+                        id: field.FIELD_NAME,
+                        label: field.FIELD_DISPLAY_NAME,
+                        type: field.FIELD_TYPE
+                    }
+                );
+            }else if(field.FIELD_TYPE == '日期'){
+                field_html = template('input_date_query_template',
+                    {
+                        id: field.FIELD_NAME,
+                        label: field.FIELD_DISPLAY_NAME,
+                        type: field.FIELD_TYPE
+                    }
+                );
+            }
+            $('#fields').append(field_html);
+        });
+    };
+
+    var buildCustomizeSearchResultList= function(structure, module, field_list){
+        var isEditable = checkEditable(module);
+        var isDelete = checkDeletable(module);
+
+        var list_html = template('search_table_template',
+                {
+                    id: structure.ID,
+                    label: structure.NAME,
+                    field_list: field_list,
+                    module_id: $('#module_id').val(),
+                    isEditable: isEditable,
+                    isDelete: isDelete
+                }
+            );
+        $('#list').append(list_html);
+
+        //setting 是动态跟随table生成的
+        var table_setting = window['table_' + structure.ID + '_setting'];
+        $('#list table:last').DataTable(table_setting);
+    };
+
     var buildStructureUI = function(json){
             var structure = json.STRUCTURE_LIST[0];//主表结构
 
             if(!structure.FIELDS_LIST)
                 return;
 
-            if(structure.STRUCTURE_TYPE == '字段'){
-                var field_html = template('input_hidden_field', 
-                    {
-                        id: 'structure_id',
-                        value: structure.ID
-                    }
-                );
-                $('#fields').append(field_html);
+            if(json.SEARCH_OBJ){//自定义查询
+                var search_obj_str = json.SEARCH_OBJ;
+                var search_obj = $.parseJSON(search_obj_str);
+                buildCustomizeSearchUI(search_obj.field_list);
+                buildCustomizeSearchResultList(structure, json, search_obj.field_list);
+            }else{
+                if(structure.STRUCTURE_TYPE == '字段'){
+                    var field_html = template('input_hidden_field',
+                        {
+                            id: 'structure_id',
+                            value: structure.ID
+                        }
+                    );
+                    $('#fields').append(field_html);
 
-                buildQueryFields(structure);
-                buildResultList(structure, json);
+                    buildQueryFields(structure);
+                    buildResultList(structure, json);
+                }
             }
+
     };
 
     var buildResultList = function(structure, module){
         var isEditable = checkEditable(module);
         var isDelete = checkDeletable(module);
-        
-        var list_html = template('search_table_template', 
+
+        var list_html = template('search_table_template',
                 {
                     id: structure.ID,
                     label: structure.NAME,
@@ -114,7 +170,7 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (da
             if(field.LISTED == 'N')
                 continue;
             if(field.FIELD_TYPE == '仅显示值'){
-                field_html = template('input_field', 
+                field_html = template('input_field',
                     {
                         id: 'F' + field.ID + '_' +field.FIELD_NAME,
                         label: field.FIELD_DISPLAY_NAME,
@@ -122,7 +178,7 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (da
                     }
                 );
             }else if(field.FIELD_TYPE == '文本编辑框'){
-                field_html = template('input_field', 
+                field_html = template('input_field',
                     {
                         id: 'F' + field.ID + '_' +field.FIELD_NAME,
                         label: field.FIELD_DISPLAY_NAME,
@@ -130,7 +186,7 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (da
                     }
                 );
             }else if(field.FIELD_TYPE == '日期编辑框'){
-                field_html = template('input_date_query_template', 
+                field_html = template('input_date_query_template',
                     {
                         id: 'F' + field.ID + '_' +field.FIELD_NAME,
                         label: field.FIELD_DISPLAY_NAME,
@@ -175,9 +231,9 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (da
                     console.error('dropdown template not found for:'+field.FIELD_NAME);
                 }
 
-                
+
             } else{
-                field_html = template('input_field', 
+                field_html = template('input_field',
                     {
                         id: 'F' + field.ID + '_' +field.FIELD_NAME,
                         label: field.FIELD_DISPLAY_NAME,
@@ -185,7 +241,7 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (da
                     }
                 );
             }
-            
+
             $('#fields').append(field_html);
         }
     };
@@ -202,7 +258,7 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (da
 
             url += '&' + name + '=' + value;
         }
-        
+        url += '&module_id=' + $('#module_id').val();
         return url;
     };
 

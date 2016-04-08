@@ -4,8 +4,8 @@
     sco: save success/err msg
 
  */
-define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_add_btn_type'],
-    function(jquery_ui, sco, w2ui, actionController, eventController, authContr, fieldAddBtnContr){
+define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_add_btn_type', './customize_search'],
+    function(jquery_ui, sco, w2ui, actionController, eventController, authContr, fieldAddBtnContr, customContr){
 
     var template = require('template');
     var w2ui = window.w2ui;
@@ -612,12 +612,14 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         var action_list= buildActionArray();
         var event_list = buildEventArray();
         var auth_list = buildAuthArray();
+        var search_obj = customContr.buildSearchObj();
         var dto = {
             module_id: $('#module_id').text(),
             structure_list: structure_list,
             action_list: action_list,
             event_list: event_list,
             auth_list: auth_list,
+            search_obj: JSON.stringify(search_obj),
             is_start: is_start,
             sys_only: $('#module_sys_only').prop('checked')
         };
@@ -733,6 +735,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                 buildActionUI(json);
                 buildEventUI(json);
                 buildAuthUI(json);
+                customContr.buildSearchObjUI(json);
 
                 bindFieldTableEvent();//click event
             }, 'json');
@@ -779,6 +782,22 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         };
 
         var buildAuthUI=function(json){
+            if(!json.AUTH_LIST)
+                return;
+
+            var auth_table = $('#auth_table').DataTable();//actionController.action_tableSetting
+            auth_table.clear().draw(false);
+            $.each(json.AUTH_LIST, function(index, val) {
+                var auth_obj = val;
+                var item={
+                    ROLE_ID: auth_obj.ROLE_ID,
+                    ROLE_PERMISSION: auth_obj.ROLE_AUTH_LIST
+                };
+                auth_table.row.add(item).draw(false);
+            });
+        };
+
+        var buildCustomizeSearchUI=function(json){
             if(!json.AUTH_LIST)
                 return;
 
