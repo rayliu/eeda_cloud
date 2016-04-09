@@ -69,6 +69,7 @@
                             // var ext_type=$.parseJSON(ext_type_json);
 
                             { "data": "F{{field.ID}}_{{field.FIELD_NAME}}_INPUT",
+                                "width": "{{field.WIDTH}}px",
                                 "render": function ( data, type, full, meta ) {
                                     if(!data)
                                         data = '';
@@ -82,6 +83,7 @@
                                 {{else}}
                                     "{{field.FIELD_NAME}}",
                                 {{/if}}
+                                "width": "{{field.WIDTH}}px",
                                 "render": function ( data, type, full, meta ) {
                                     if(!data)
                                         data = '';

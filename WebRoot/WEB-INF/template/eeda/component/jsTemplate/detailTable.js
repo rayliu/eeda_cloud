@@ -1,26 +1,26 @@
 
 
 <script id="${id}" type="text/html">
-    <div id="table_{{id}}_div" name="table_{{id}}_div" class="col-lg-12" 
+    <div id="table_{{id}}_div" name="table_{{id}}_div" class="col-lg-12"
         parent_table_row_id="{{parent_table_row_id}}"
         parent_table_row_index="{{parent_table_row_index}}"
         {{if is_3rd_table}} style="display:none;"{{/if}}>
-        
+
         {{if is_edit_order}}
             <h4>{{label}}
-                <button id="add_row_btn_{{id}}" table_id="table_{{id}}" structure_id="{{structure_id}}" 
+                <button id="add_row_btn_{{id}}" table_id="table_{{id}}" structure_id="{{structure_id}}"
                     {{if is_3rd_table}} is_3rd_table="true" {{/if}}
-                    parent_table_id="{{parent_table_id}}" 
+                    parent_table_id="{{parent_table_id}}"
                     parent_table_row_id="{{parent_table_row_id}}"
                     parent_table_row_index="{{parent_table_row_index}}"
                     name="addRowBtn" type="button" class="btn btn-success btn-xs">添加</button>
             </h4>
         {{/if}}
         <table id="table_{{id}}" name="table_{{id}}" structure_id="{{structure_id}}"
-            parent_structure_id="{{parent_table_id}}" 
+            parent_structure_id="{{parent_table_id}}"
             parent_table_row_id="{{parent_table_row_id}}"
             parent_table_row_index="{{parent_table_row_index}}"
-            {{if is_3rd_table}} 
+            {{if is_3rd_table}}
                 is_3rd_table="true"
 
             {{/if}}
@@ -59,19 +59,19 @@
                 $(row).attr('parent_row_index', data.PARENT_ROW_INDEX);
 
                 $(row).append('<input type="hidden" name="id" value="' + id + '"/>');
-                
+
                 if(data.REF_T_ID != null)
                     $(row).append('<input type="hidden" name="ref_t_id" value="' + data.REF_T_ID + '"/>');
                 //生成隐藏字段的input
                 {{each field_list as field}}
                     {{if field.FIELD_TYPE == '隐藏值'}}
-                        $(row).append('<input type="hidden" name="F{{field.ID}}_{{field.FIELD_NAME}}" display_name="{{field.FIELD_DISPLAY_NAME}}" value="' 
+                        $(row).append('<input type="hidden" name="F{{field.ID}}_{{field.FIELD_NAME}}" display_name="{{field.FIELD_DISPLAY_NAME}}" value="'
                                 + data.F{{field.ID}}_{{field.FIELD_NAME}} + '" />');
                     {{/if}}
                 {{/each}}
             },
             "columns": [
-                { "width": "30px", "orderable":false, 
+                { "width": "30px", "orderable":false,
                     "render": function ( data, type, full, meta ) {
                       return '<a class="delete"  table_id="table_{{id}}" href="javascript:void(0)" title="删除"><i class="glyphicon glyphicon-remove"></i></a>&nbsp;&nbsp;&nbsp;'
                             {{if detail_table_id}}
@@ -80,8 +80,9 @@
                     }
                 },
                 {{each field_list as field}}
-                    {   "data": "F{{field.ID}}_{{field.FIELD_NAME}}", 
+                    {   "data": "F{{field.ID}}_{{field.FIELD_NAME}}",
                         "visible": {{if field.FIELD_TYPE == '隐藏值'}}false{{else}}true{{/if}},
+                        "width": "{{field.WIDTH}}px",
                         "render": function ( data, type, full, meta ) {
                             if(!data)
                                 data = '';
@@ -170,7 +171,7 @@
                             {{else}}
                                 return '<input type="text" name="F{{field.ID}}_{{field.FIELD_NAME}}" display_name="{{field.FIELD_DISPLAY_NAME}}" value="' + data + '" class="form-control"/>';
                             {{/if}}
-                       } 
+                       }
                     },
                 {{/each}}
             ]
@@ -183,7 +184,7 @@
         };
 
         var buildProductInput=function(field){
-            
+
             var field_html = template('input_product_template', {
                 customer_id: '{{customer_id}}',
                 id: 'F' + field.ID + '_' + field.FIELD_NAME,

@@ -181,7 +181,7 @@ public class DbUtils {
 			if(!key.endsWith("_list")){
             	String value = String.valueOf(entry.getValue()) ;
             	//忽略  action 字段
-            	if(StringUtils.isNotEmpty(value) && !"action".equals(key)){
+            	if(StringUtils.isNotBlank(value) && !"action".equals(key)){
             		logger.debug(key+":"+value);
             		try {
                         model.set(key, value);

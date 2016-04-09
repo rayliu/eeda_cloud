@@ -101,8 +101,8 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         },
         "createdRow": function ( row, data, index ) {
             $(row).attr('id', data.ID);
-            $(row).append('<input class="ext_type" type="hidden" value="'+data.FIELD_TYPE_EXT_TYPE+'" />');
-            $(row).append('<textarea class="ext_text" style="display:none;" >'+data.FIELD_TYPE_EXT_TEXT+'</textarea>');
+            $(row).append("<input class='ext_type' type='hidden' value='"+data.FIELD_TYPE_EXT_TYPE+"'/>");
+            $(row).append("<textarea class='ext_text' style='display: none;' >'"+data.FIELD_TYPE_EXT_TEXT+"</textarea>");
         },
         //"ajax": "/damageOrder/list",
         "columns": [
@@ -112,7 +112,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                 }
             },
             { "data": "ID", visible: false},
-            { "data": "FIELD_DISPLAY_NAME",
+            { "data": "FIELD_DISPLAY_NAME", "width": "130px",
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -140,7 +140,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             //                 '</div>';
             //     }
             // },
-            { "data": "FIELD_TYPE_EXT_TYPE", visible: true,
+            { "data": "FIELD_TYPE_EXT_TYPE", visible: false,
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -183,6 +183,13 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                         +'   <option '+(data=='Y'?'selected':'')+'>Y</option>'
                         +'    <option '+(data=='N'?'selected':'')+'>N</option>'
                         +'</select>';
+                }
+            },
+            { "data": "WIDTH",
+                "render": function ( data, type, full, meta ) {
+                    if(!data)
+                        data='100';
+                  return '<input type="text" value="'+data+'" class="width form-control"/>';
                 }
             },
             { "data": "FIELD_TEMPLATE_PATH", visible: false,
@@ -491,6 +498,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                 // field_type_ext_text:$(row).find('textarea.ext_text').val(),
                 required: $(row).find('select.required').val(),
                 listed: $(row).find('select.listed').val(),
+                width: $(row).find('input.width').val(),
                 //field_template_path: $(row.children[col_index+5]).find('input').val(),
                 index_name:'',
                 action: $('#module_id').val().length>0?'UPDATE':'CREATE',
@@ -725,6 +733,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                             "FIELD_TYPE_EXT_TEXT": field.FIELD_TYPE_EXT_TEXT,
                             "REQUIRED": field.REQUIRED,
                             "LISTED": field.LISTED,
+                            "WIDTH": field.WIDTH,
                             "FIELD_TEMPLATE_PATH": field.FIELD_TEMPLATE_PATH,
                             "INDEX_NAME": ''
                         };
