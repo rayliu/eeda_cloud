@@ -729,4 +729,15 @@ public class ModuleController extends Controller {
             renderJson(Collections.EMPTY_LIST);
         }
     }
+    
+    public void orderDelete(){
+        String sId = getPara("structure_id");
+        String orderId = getPara("order_id");
+        int count = Db.update("delete from t_"+sId+" where id=?", orderId);
+        if(count==1){
+            renderText("OK");
+        }else{
+            renderText("failed");
+        }
+    }
 }

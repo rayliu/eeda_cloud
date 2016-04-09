@@ -1,4 +1,4 @@
-define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (dataTables, sb) {
+define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN', 'sco'], function (dataTables, sb) {
     var template = require('template');
 
     template.helper('replaceReturn', function (content) {
@@ -115,7 +115,7 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (da
 
     var buildStructureUI = function(json){
             var structure = json.STRUCTURE_LIST[0];//主表结构
-
+            $('#structure_id').val(structure.ID);
             if(!structure.FIELDS_LIST)
                 return;
 
@@ -291,6 +291,20 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN'], function (da
         }else if('新增' == action){//TODO: 后台应该校验,没有权限,直接输入URL也是不能进入页面的
             window.location.href='/m/'+$("#module_id").val()+'-add';
         }
+    });
+
+    $('#list').on('click', '.delete', function(e){
+        var el = $(this);
+        var order_id = el.attr('delete_id');
+        var s_id=$('#structure_id').val();
+        $.post('/module/orderDelete', {structure_id:s_id, order_id: order_id}, function(json){
+            if(json=='OK'){
+                $.scojs_message('操作成功', $.scojs_message.TYPE_OK);
+                search();
+            }else{
+                $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
+            }
+        });
     });
 
     $("#resetBtn").click(function(){
