@@ -24,7 +24,7 @@ import controllers.eeda.ModuleController;
 
 public class SearchOrderHandler {
     private static Logger logger = Logger.getLogger(SearchOrderHandler.class);
-    private static Long office_id = UserLogin.getCurrentUser().getLong("office_id");
+    
     
     public static Map searchOrder(Enumeration<String>  paraNames, HttpServletRequest request){
         Map orderListMap = new HashMap();
@@ -140,12 +140,18 @@ public class SearchOrderHandler {
             Map valueMap = entry.getValue();
             colCondition += "and " + key + " between '" + valueMap.get("begin_time") + " 00:00:00' and " + valueMap.get("end_time") +" 23:59:59";
         }
+        //sys_only?
+        if(searchDto.isSysModule){
+            Long office_id = UserLogin.getCurrentUser().getLong("office_id");
+            colCondition += " and office_id ="+office_id;
+        }
         
         String sql = "select t.* "+ subCol +" from t_" + searchDto.structur_id +" t where 1=1 " + colCondition;
         return sql;
     }
 
     private static String getCustomizeSearchSql(HttpServletRequest request, SearchDto searchDto, Record rec) {
+        Long office_id = UserLogin.getCurrentUser().getLong("office_id");
         String sql = "";
         String colCondition = "";
         String settingStr = rec.getStr("setting_json");
@@ -244,6 +250,18 @@ public class SearchOrderHandler {
         if(StringUtils.isNotEmpty(searchDto.structure_name)){
             Record s = ModuleController.getStructureByName(searchDto.structure_name);
             searchDto.structur_id = s.get("id").toString();
+            String isSys=s.getStr("sys_only");
+            if("Y".equals(isSys)){
+                searchDto.isSysModule = true;
+            }
+        }
+        
+        Record m = Db.findFirst("select * from eeda_modules where id=?", searchDto.module_id);
+        if(m!=null){
+            String isSys=m.getStr("sys_only");
+            if("Y".equals(isSys)){
+                searchDto.isSysModule = true;
+            }
         }
         return searchDto;
     }

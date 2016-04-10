@@ -44,7 +44,7 @@
 				locLevel = "area";
 			}
 
-			$.get('/serviceProvider/'+locLevel, {id:code}, function(data){
+			$.get('/location/'+locLevel, {id:code}, function(data){
 				spListContent.empty();
 				for(var i = 0; i < data.length; i++){
 					var loc = data[i];

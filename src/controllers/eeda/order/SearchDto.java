@@ -10,6 +10,7 @@ public class SearchDto {
     String draw = "";
     String start = "0";
     String length = "50";
+    boolean isSysModule=false;
     
     public List<String> fieldIdList = new ArrayList<String>();
     public List<String> fieldNameList = new ArrayList<String>();
