@@ -154,7 +154,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                   return '<input class="form-control" rows="1">'+data+'</input>';
                 }
             },
-            { "data": "FIELD_DATA_TYPE", visible: false,
+            { "data": "FIELD_DATA_TYPE", visible: true,
                 "render": function ( data, type, full, meta ) {
                     if(!data)
                         data='';
@@ -344,7 +344,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                 });
                 //特殊的城市选择列表，额外加
                 el.append('<option value="-1">城市列表</option>');
-                
+
                 if(default_value)
                     el.val(default_value);
 

@@ -396,7 +396,8 @@ public class EedaCommonHandler {
             if(StringUtils.isNotEmpty(field_ext_type) && !"undefined".equals(field_ext_type)){
                 Gson gson = new Gson();  
                 Map<String, ?> ext_type_dto= gson.fromJson(field_ext_type, HashMap.class);
-                if(ext_type_dto.get("modal_field_default_value_type") ==null)
+                if(ext_type_dto==null || ext_type_dto.get("modal_field_default_value_type") ==null 
+                        || StringUtils.isEmpty(ext_type_dto.get("modal_field_default_value_type").toString()))
                     continue;
                 String modal_field_default_value_type = ext_type_dto.get("modal_field_default_value_type").toString();
                 String modal_field_default_value = ext_type_dto.get("modal_field_default_value").toString();
