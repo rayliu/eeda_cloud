@@ -285,8 +285,8 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             $("#modal_field_type").val(field_type);
 
             var ext_type=$(tr).find('input.ext_type').val();
-            if(ext_type.length>0){
-                var field_type_ext = $.parseJSON($(tr).find('input.ext_type').val());
+            if(ext_type.length>0 && ext_type !='undefined'){
+                var field_type_ext = $.parseJSON(ext_type);
                 if('下拉列表' == field_type){
                     loadDropdownList(field_type_ext.id);
                     $("#modal_field_type_ext_div").show();
@@ -344,10 +344,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                 });
                 //特殊的城市选择列表，额外加
                 el.append('<option value="-1">城市列表</option>');
-                //特殊的产品列表，额外加
-                el.append('<option value="-2">产品列表</option>');
-                //特殊的自动编号列表，额外加
-                el.append('<option value="-3">自动编号选项</option>');
+                
                 if(default_value)
                     el.val(default_value);
 

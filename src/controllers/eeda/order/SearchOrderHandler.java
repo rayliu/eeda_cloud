@@ -250,10 +250,7 @@ public class SearchOrderHandler {
         if(StringUtils.isNotEmpty(searchDto.structure_name)){
             Record s = ModuleController.getStructureByName(searchDto.structure_name);
             searchDto.structur_id = s.get("id").toString();
-            String isSys=s.getStr("sys_only");
-            if("Y".equals(isSys)){
-                searchDto.isSysModule = true;
-            }
+            searchDto.module_id = s.get("module_id").toString();
         }
         
         Record m = Db.findFirst("select * from eeda_modules where id=?", searchDto.module_id);
