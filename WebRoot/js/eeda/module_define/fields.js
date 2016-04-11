@@ -294,10 +294,10 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 
                     loadDataGridList(field_type_ext, this);
                 }
-                if(field_type_ext.enter_next_line){
+                if(field_type_ext && field_type_ext.enter_next_line){
                     $('#modal_field_enter_next_line').prop('checked', true);
                 }
-                if(field_type_ext.modal_field_default_value_type){
+                if(field_type_ext && field_type_ext.modal_field_default_value_type){
                     $("#modal_field_default_value_type").val(field_type_ext.modal_field_default_value_type)
                     if('系统内置' == field_type_ext.modal_field_default_value_type){
                         $("#modal_field_default_value_text").hide();
