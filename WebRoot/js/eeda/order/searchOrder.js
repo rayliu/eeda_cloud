@@ -262,7 +262,7 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN', 'sco'], funct
         return url;
     };
 
-    $.post('/module/getOrderStructure', {module_id: $("#module_id").val()}, function(json){
+    var callback=function(json){
         console.log('getOrderStructure....');
         console.log(json);
 
@@ -273,7 +273,32 @@ define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN', 'sco'], funct
 
         buildStructureUI(json);
         buildButtonUI(json);
-    }, 'json');
+    }
+
+    var getModuleDefine=function(){
+        $.post('/module/getOrderStructure', {module_id: $("#module_id").val()}, function(json){
+            callback(json);
+            if(!!window.localStorage){
+                localStorage.setItem('m_'+$("#module_id").val(), JSON.stringify(json));
+            }
+        }, 'json');
+    }
+
+    if(!!window.localStorage){
+            var json_str = localStorage.getItem('m_'+$("#module_id").val());
+            if(json_str){
+                var json = $.parseJSON(json_str);
+                if(json.MODULE_VERSION == $("#module_version").val()){
+                    callback(json);
+                }else{
+                    getModuleDefine();
+                }
+            }else{
+                getModuleDefine();
+            }
+
+    }
+
 
     var search=function(){
         var url = buildStructureSearchUrl();

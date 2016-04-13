@@ -243,7 +243,8 @@ public class ModuleController extends Controller {
         }else{
             Db.update(" update eeda_modules set sys_only = 'N' where id=?", module_id);
         }
-
+        
+        Db.update(" update eeda_modules set version = version+1 where id=?", module_id);
         Record orderDto = getOrderStructureDto(module_id);
         renderJson(orderDto);
     }
@@ -407,6 +408,7 @@ public class ModuleController extends Controller {
         
         Record rec = new Record();
         rec.set("module_id", module_id);
+        rec.set("module_version", module.get("version"));
         rec.set("sys_only", sys_only);
         rec.set("module_name", module.get("module_name"));
         rec.set("structure_list", structure_list);

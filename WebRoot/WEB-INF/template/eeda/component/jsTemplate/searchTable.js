@@ -31,7 +31,7 @@
             "searching": false,
             "autoWidth": true,
             "language": {
-                "url": "/yh/js/plugins/datatables-1.10.9/i18n/Chinese.json"
+                "url": "/js/lib/datatables/i18n/Chinese.json"
             },
             "createdRow": function ( row, data, index ) {
                 var id='';
