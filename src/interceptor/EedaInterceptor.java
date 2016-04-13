@@ -31,6 +31,11 @@ public class EedaInterceptor implements Interceptor{
 	        setSysTitle(ai.getController());
 	        checkPermission(ai);
 //	        loadMenu(ai.getController());
+	    }else{
+	        if(!"/login".equals(ai.getActionKey())){
+	            ai.getController().redirect("/login");
+	            return;
+	        }
 	    }
 		ai.invoke();
 	}
