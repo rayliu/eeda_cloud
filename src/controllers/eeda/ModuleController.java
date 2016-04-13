@@ -1,6 +1,7 @@
 package controllers.eeda;
 
 import interceptor.EedaInterceptor;
+import interceptor.EedaMenuInterceptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +50,7 @@ public class ModuleController extends Controller {
     Long office_id = UserLogin.getCurrentUser().getLong("office_id");
     ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     
+    @Before(EedaMenuInterceptor.class)
     public void index() {
         List<Record> viewsRecs = Db.find("select * from eeda_sql_views where office_id=?", office_id);
         setAttr("sqlViews", viewsRecs);
