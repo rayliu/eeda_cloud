@@ -82,6 +82,12 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	            		}
 	            	});
 	            }
+	        } else if (field.FIELD_TYPE == '图片') {
+	            field_html = template('input_pic_template', {
+	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
+	                label: field.FIELD_DISPLAY_NAME,
+	                is_require: field.REQUIRED
+	            });
 	        } else {
 	            field_html = template('input_field', {
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
@@ -403,7 +409,7 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 		            for (var i = 0; i < json.FIELDS_LIST.length; i++) {
 		                var fieldsObj = json.FIELDS_LIST[i];
 		                $.each(fieldsObj, function(key, value) {
-		                    $("#" + key).val(value);
+		                    $("#" + key).val(value).change();
 		                });
 		            }
 

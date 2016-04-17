@@ -56,6 +56,7 @@
 </script>
 
 <%include("/eeda/component/jsTemplate/inputField.js", {id:'input_field'}){} %>
+<%include("/eeda/component/jsTemplate/inputPicField.js", {}){} %>
 <%include("/eeda/component/jsTemplate/textareaField.js", {}){} %>
 <%include("/eeda/component/jsTemplate/inputHiddenField.js", {}){} %>
 <%include("/eeda/component/jsTemplate/inputDateField.js",{}){} %>
@@ -74,10 +75,7 @@
 <!-- 模态框 -->
 <%include("/eeda/profile/module/editOrder_search_list_modal.html", {}){} %>
 
-<!--script src="/yh/js/eeda-common.js"></script>
-<script src="/js/eeda/order/editOrder_btn.js"></script>
-<script src="/js/eeda/order/editOrder_table_add_btn.js"></script>
-<script src="/js/eeda/order/editOrder.js"></script-->
+
 <script>
     requirejs(['/js/common.js'], function (common) {
         requirejs(['app/order/main']);

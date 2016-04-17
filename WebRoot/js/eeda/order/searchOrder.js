@@ -1,4 +1,4 @@
-define(['dataTables', 'sb_admin', 'template', 'datetimepicker_CN', 'sco'], function (dataTables, sb) {
+define(['sb_admin', 'dataTables', 'template', 'datetimepicker_CN', 'sco'], function (sb, dataTables) {
     var template = require('template');
 
     template.helper('replaceReturn', function (content) {
