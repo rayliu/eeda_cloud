@@ -76,6 +76,21 @@
                                     return data;
                                }
                             },
+                        {{else if (field.FIELD_TYPE == '图片' ) }}
+
+                            { "data": "F{{field.ID}}_{{field.FIELD_NAME}}",
+                                "width": "{{field.WIDTH}}px",
+                                "render": function ( data, type, full, meta ) {
+                                    console.log(data);
+                                    if(!data){
+                                        str = '';
+                                    }else{
+                                        str = '<img alt="30x30" style="height: 100px; " src="'+data+'">';
+                                    }
+
+                                    return str;
+                               }
+                            },
                         {{else}}
                             { "data":
                                 {{if (field.ID !=null)}}

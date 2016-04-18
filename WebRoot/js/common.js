@@ -17,7 +17,9 @@ requirejs.config({
         datetimepicker_CN: 'bootstrap-datetimepicker/bootstrap-datetimepicker.zh-CN',
         datetimepicker: 'bootstrap-datetimepicker/bootstrap-datetimepicker.min',
         validate: 'validate/jquery.validate.min',
-        validate_cn: 'validate/jvalidate.messages_cn'
+        validate_cn: 'validate/jvalidate.messages_cn',
+        jq_ui_widget: 'jQuery-File-Upload-9.9.3/js/vendor/jquery.ui.widget',
+        file_upload: 'jQuery-File-Upload-9.9.3/js/jquery.fileupload'
     },
     shim: {
         bootstrap:{
@@ -58,7 +60,12 @@ requirejs.config({
         },
         validate_cn:{
             deps: ['validate']
+        },
+        jq_ui_widget:{
+            deps: ['jquery']
+        },
+        file_upload:{
+            deps: ['jq_ui_widget']
         }
-
     }
 });

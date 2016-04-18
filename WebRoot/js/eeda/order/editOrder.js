@@ -1,5 +1,5 @@
-define(['jquery_ui', 'sco', './editOrder_btn', './editOrder_table_add_btn', './orderController', './editOrder_event'], 
-    function(jquery_ui, sco, editOrder_btn_controller, editOrder_table_add_btn, orderController, eventController){
+define(['jquery_ui', 'sco', 'file_upload', './editOrder_btn', './editOrder_table_add_btn', './orderController', './editOrder_event'], 
+    function(jquery_ui, sco, file_upload, editOrder_btn_controller, editOrder_table_add_btn, orderController, eventController){
 
     
 
