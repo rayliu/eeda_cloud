@@ -232,6 +232,7 @@ public class EedaCommonHandler {
         String returnStr = "";
         String orderId = dto.get("id").toString();
         String actionName = dto.get("action").toString();
+        
         if("保存".equals(actionName)){
             List<Map<String, String>> fields_list = (ArrayList<Map<String, String>>)dto.get("fields_list");
             for (Map<String, String> tableMap : fields_list) {//获取每一个主表+主表从属表
@@ -352,6 +353,13 @@ public class EedaCommonHandler {
     }
     
     public static String commonInsert(Map<String, ?> dto) {
+        boolean isSysOnly=false;
+        String module_id = dto.get("module_id").toString();
+        Record moRec = Db.findFirst("select * from eeda_modules where id=?", module_id);
+        if("Y".equals(moRec.get("sys_only"))){
+            isSysOnly = true;
+        }
+        
         Long order_id = new Long("0");
         List<Map<String, String>> fields_list = (ArrayList<Map<String, String>>)dto.get("fields_list");
         for (Map<String, String> tableMap : fields_list) {//获取每一行
@@ -373,7 +381,12 @@ public class EedaCommonHandler {
             
             //处理新增前设置的默认值
             setDefaultBeforeInsert(tableName, tObj);
-            
+            //如果是系统级则加上office_id
+            if(isSysOnly){
+                Long office_id = UserLogin.getCurrentUser().getLong("office_id");
+                tObj.colName += ", office_id";
+                tObj.colValue+= ",'"+office_id+"'";
+            }
             String sql = "insert into t_"+tableName+"("+tObj.colName+") values("+tObj.colValue+")";
             logger.debug(sql);
             Db.update(sql);

@@ -23,7 +23,7 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	        console.log(field.FIELD_DISPLAY_NAME +'FIELD_TYPE:'+field.FIELD_TYPE+'is_require:'+field.REQUIRED);
 
 	        var disabled = "";
-	        if(field.FIELD_TYPE_EXT_TYPE){
+	        if(field.FIELD_TYPE_EXT_TYPE && field.FIELD_TYPE_EXT_TYPE !='undefined'){
 	        	var ext_type_json = field.FIELD_TYPE_EXT_TYPE;
 		        var ext_type_obj = $.parseJSON(ext_type_json);
 		        if(ext_type_obj)
@@ -50,6 +50,11 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	                label: field.FIELD_DISPLAY_NAME,
 	                is_require: field.REQUIRED,
 	                disabled: disabled
+	            });
+	        } else if (field.FIELD_TYPE == '隐藏值') {
+	            field_html = template('input_hidden_field', {
+	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
+	                label: field.FIELD_DISPLAY_NAME
 	            });
 	        } else if (field.FIELD_TYPE == '日期编辑框') {
 	            field_html = template('input_date_field_template', {
