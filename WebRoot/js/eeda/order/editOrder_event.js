@@ -101,7 +101,7 @@ define(['app/eeda-common', './orderController'], function(eeda, orderController)
 
             $.each(structure.FIELDS_LIST, function(i, field){
                 var field_type_ext_str = field.FIELD_TYPE_EXT_TYPE;
-                if(field_type_ext_str){
+                if(field_type_ext_str && field_type_ext_str !='undefined'){
                     field_type_ext = $.parseJSON(field_type_ext_str);
                     if(field_type_ext.enter_next_line){
                         is_enter = true;

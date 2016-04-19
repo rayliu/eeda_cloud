@@ -28,7 +28,7 @@ define(['jquery_ui', 'sco', 'file_upload', './editOrder_btn', './editOrder_table
                 editOrder_table_add_btn.set_global_order_structure(global_order_structure);
                 eventController.set_global_order_structure(global_order_structure);
                 
-                $('#module_structure').val(JSON.stringify(json));
+               
 
                 $('#module_name').text(json.MODULE_NAME);
                 document.title = json.MODULE_NAME + ' | ' + document.title;
