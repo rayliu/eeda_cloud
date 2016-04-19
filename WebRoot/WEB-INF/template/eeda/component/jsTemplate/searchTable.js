@@ -56,7 +56,7 @@
                             action_str = action_str+'<a class="edit"  target="_blank" href="/m/{{module_id}}-'+full.ID+'" title="编辑"><i class="fa fa-edit"></i></a>';
                         }
                         if(isDelete){
-                            action_str = action_str+'&nbsp;&nbsp;&nbsp;<a class="delete" href="javascript:void(0)" title="删除" delete_id="'+full.ID+'"><i class="glyphicon glyphicon-remove"></i></a>';
+                            action_str = action_str+'<a class="delete" href="javascript:void(0)" title="删除" delete_id="'+full.ID+'"><i class="glyphicon glyphicon-remove"></i></a>';
                         }
 
                         return action_str;

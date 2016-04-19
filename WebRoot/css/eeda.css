@@ -346,4 +346,7 @@ section>a.remove {
     color: red;
 }
 
+a.edit {
+    margin-right: 5px;
+}
 /* ray added */
