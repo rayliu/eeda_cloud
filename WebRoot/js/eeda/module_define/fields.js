@@ -294,6 +294,9 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 
                     loadDataGridList(field_type_ext, this);
                 }
+                if(field_type_ext && !field_type_ext.editable){
+                    $('#modal_field_editable').prop('checked', true);
+                }
                 if(field_type_ext && field_type_ext.enter_next_line){
                     $('#modal_field_enter_next_line').prop('checked', true);
                 }
@@ -447,6 +450,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 
         var field_type=$("#modal_field_type").val()
         $(tr).find('input.field_type').val(field_type);
+        var field_editable = !$('#modal_field_editable').prop('checked');
         var enter_next_line = $('#modal_field_enter_next_line').prop('checked');
         if('下拉列表'== field_type|| '数据列表' == field_type){
             var field_type_ext={
@@ -458,6 +462,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         }else{
             var field_type_ext={
                 enter_next_line: enter_next_line,
+                editable: field_editable,
                 modal_field_default_value_type: $("#modal_field_default_value_type").val(),
                 modal_field_default_value: $("#modal_field_default_value").val(),
                 modal_field_default_value_text: $("#modal_field_default_value_text").val(),

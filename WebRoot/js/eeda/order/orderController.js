@@ -21,30 +21,42 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	    for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
 	        var field = structure.FIELDS_LIST[j];
 	        console.log(field.FIELD_DISPLAY_NAME +'FIELD_TYPE:'+field.FIELD_TYPE+'is_require:'+field.REQUIRED);
+
+	        var disabled = "";
+	        if(field.FIELD_TYPE_EXT_TYPE){
+	        	var ext_type_json = field.FIELD_TYPE_EXT_TYPE;
+		        var ext_type_obj = $.parseJSON(ext_type_json);
+		        if(ext_type_obj)
+		        	disabled = (ext_type_obj.editable==true)?"":"disabled";
+	        }
+
 	        var field_html = '';
 	        if (field.FIELD_TYPE == '仅显示值') {
 	            field_html = template('input_field', {
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                label: field.FIELD_DISPLAY_NAME,
-	                disabled: "disabled"
+	                disabled: disabled
 	            });
 	        } else if (field.FIELD_TYPE == '文本编辑框') {
 	            field_html = template('input_field', {
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                label: field.FIELD_DISPLAY_NAME,
-	                is_require: field.REQUIRED
+	                is_require: field.REQUIRED,
+	                disabled: disabled
 	            });
 	        } else if (field.FIELD_TYPE == '多行文本编辑框') {
 	            field_html = template('textarea_field', {
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                label: field.FIELD_DISPLAY_NAME,
-	                is_require: field.REQUIRED
+	                is_require: field.REQUIRED,
+	                disabled: disabled
 	            });
 	        } else if (field.FIELD_TYPE == '日期编辑框') {
 	            field_html = template('input_date_field_template', {
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                label: field.FIELD_DISPLAY_NAME,
-	                is_require: field.REQUIRED
+	                is_require: field.REQUIRED,
+	                disabled: disabled
 	            });
 	        } else if (field.FIELD_TYPE == '下拉列表') {
 	        	var field_type = $.parseJSON(field.FIELD_TYPE_EXT_TYPE);
@@ -53,7 +65,8 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	                    id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                    label: field.FIELD_DISPLAY_NAME,
 	                    value: '',
-	                    is_require: field.REQUIRED
+	                    is_require: field.REQUIRED,
+	                	disabled: disabled
 	                });
 	            }else{//common list field
 	            	var dropdown_id = field_type.id;
@@ -75,7 +88,8 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 			                    label: field.FIELD_DISPLAY_NAME,
 			                    is_require: field.REQUIRED,
 			                    structure_id: list_structure.ID,
-			                    field_name: 'F' + list_field.ID + '_' + list_field.FIELD_NAME
+			                    field_name: 'F' + list_field.ID + '_' + list_field.FIELD_NAME,
+	                			disabled: disabled
 			                });
 	            		}else{
 	            			console.error('dropdown template not found for:'+field.FIELD_NAME);
@@ -86,13 +100,15 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	            field_html = template('input_pic_template', {
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                label: field.FIELD_DISPLAY_NAME,
-	                is_require: field.REQUIRED
+	                is_require: field.REQUIRED,
+	                disabled: disabled
 	            });
 	        } else {
 	            field_html = template('input_field', {
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                label: field.FIELD_DISPLAY_NAME,
-	                is_require: field.REQUIRED
+	                is_require: field.REQUIRED,
+	                disabled: disabled
 	            });
 	        }
 
