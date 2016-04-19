@@ -1,6 +1,7 @@
 package controllers.eeda.profile;
 
 import interceptor.EedaInterceptor;
+import interceptor.EedaMenuInterceptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +41,7 @@ public class UserRoleController extends Controller {
 	Long office_id = UserLogin.getCurrentUser().getLong("office_id");
 	ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
 
+	@Before(EedaMenuInterceptor.class)
 	public void index(){
 		render("/eeda/profile/userRole/userRoleList.html");
 	}
@@ -84,7 +86,7 @@ public class UserRoleController extends Controller {
 	}
 	
 	/*给新用户分配角色*/
-//	@RequiresPermissions(value = {PermissionConstant.PERMSSION_UR_CREATE})
+	@Before(EedaMenuInterceptor.class)
 	public void add(){
 		render("/eeda/profile/userRole/addRole.html");
 	}
