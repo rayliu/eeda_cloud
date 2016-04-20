@@ -313,8 +313,9 @@ define(['sb_admin', 'dataTables', 'template', 'datetimepicker_CN', 'sco'], funct
         console.log('btn click. action:'+action);
         if('查询' == action){
             search();
-        }else if('新增' == action){//TODO: 后台应该校验,没有权限,直接输入URL也是不能进入页面的
-            window.location.href='/m/'+$("#module_id").val()+'-add';
+        }else if('新增' == action){
+            window.open('/m/'+$("#module_id").val()+'-add');
+            //window.location.href='/m/'+$("#module_id").val()+'-add';
         }
     });
 
