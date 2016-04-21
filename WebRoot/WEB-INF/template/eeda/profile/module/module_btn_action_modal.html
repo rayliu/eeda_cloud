@@ -22,10 +22,18 @@
                             执行
                             <select class="form-control" name="action" style="display: initial;width: initial;">
                                 <option>更新</option>
+                                <option>页面跳转</option>
                                 <option>打印</option>
                                 <option>发送短信</option>
                                 <option>发送邮件</option>
                             </select>
+                        </div>
+                        <div id="modal_link_setting_div" class="form-group" style="display: none;">
+                            <select class="form-control" name="link_action" style="width: 25%;display: inline;">
+                                <option>原页面跳转</option>
+                                <option>新增一页跳转</option>
+                            </select>目标单据
+                            <input name="target_module" class="form-control" style="display: initial;width: initial;" type="text">
                         </div>
                         <div id="modal_print_setting_div" class="form-group" style="display: none;">
                             <label class="control-label" for="inputSuccess">PDF模板名: (打印设置请联系技术人员)</label>

@@ -197,6 +197,106 @@ define(['app/eeda-common', './orderController', './editOrder_event'], function(e
         return order_dto;
     };
 
+    var isLinkJump=function(btn){
+        console.log('isLinkJump....');
+        var is_link_jump =false;
+        var btnName = btn.text();
+        var module_id=$("#module_id").val();
+        if(!!window.localStorage){
+            var json_str = localStorage.getItem('m_'+module_id);
+            var json = $.parseJSON(json_str);
+            var action_list = json.ACTION_LIST;
+            $.each(action_list, function(i, action){
+                if(action.UI_TYPE=='编辑' && action.ACTION_NAME==btnName){
+                    var action_str = action.ACTION_SCRIPT;
+                    var action_arr = $.parseJSON(action_str);
+                    $.each(action_arr, function(j, action_json){
+                        var command_str = action_json.command;
+                        var command = $.parseJSON(command_str);
+                        if(command.action=='页面跳转'){
+                            is_link_jump=true;
+                            var module_name = command.link_setting.target_module;
+                            var module_arr = module_name.split('.');
+                            $.post('/module/getStructureByName', {name: module_arr[0]}, function(json){
+                                var module_id=json.MODULE_ID;
+                                if(command.link_setting.link_action =='原页面跳转'){
+
+                                    if(module_arr.length>1 && module_arr[1]=='新增'){
+                                        window.location.href='/m/'+module_id+'-add';
+                                    }else{
+                                        window.location.href='/m/'+module_id;
+                                    }
+                                }else{
+                                    if(module_arr.length>1 && module_arr[1]=='新增'){
+                                        window.open('/m/'+module_id+'-add');
+                                    }else{
+                                        window.open('/m/'+module_id);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+        return is_link_jump;
+    };
+
+    var common_btn_save=function(btn){
+    // 关闭所有打开的下级从表
+        $('i.fa-chevron-down').closest('a').click();
+
+        btn.attr('disabled', false);
+        var order_dto = buildOrderDto();
+        order_dto.action = btn.text();
+
+        console.log('save OrderData....');
+        console.log(order_dto);
+        //异步向后台提交数据
+        $.post('/m_save', {
+            params: JSON.stringify(order_dto)
+        }, function(data) {
+            var order = data;
+            console.log(order);
+            if (order.ID > 0) {
+                if(btn.text().indexOf('打印')>-1){
+                    var pdf_path = '/download/'+order.RETURN_STR;
+                    console.log(pdf_path);
+                    window.open(pdf_path, 'download');
+                    return;//no need to refresh UI
+                }else if(order.RETURN_STR=='smsFailed'){
+                    $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
+                    return;
+                }
+
+                $('#order_id').val(order.ID);
+                $.scojs_message('操作成功', $.scojs_message.TYPE_OK);
+
+                eeda.urlAfterSave($("#module_id").val(), order.ID);
+                //重新取一次数据渲染页面
+                var structure_json_str = localStorage.getItem('m_'+$("#module_id").val());
+                var structure_json = JSON.parse(structure_json_str);
+                structure_json.id = order.ID;
+
+                //TODO:  这里跟editOrder.js 中重复了,看看如何优化?
+                var commonHandle=function(){
+                    buildButtonUI(global_order_structure);
+                    bindBtnClick(); //绑定按钮事件
+                    eventController.bindEvent();
+                    $('[data-toggle=tooltip]').tooltip();
+                };
+                orderController.fillOrderData(structure_json, commonHandle);
+
+                $('#saveBtn').attr('disabled', false);
+            } else {
+                $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
+                $('#saveBtn').attr('disabled', false);
+            }
+        }, 'json').fail(function() {
+            $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
+            $('#saveBtn').attr('disabled', false);
+        });
+    }
 
     var bindBtnClick = function() {
         $('button.order_level').on('click', function(e) {
@@ -207,65 +307,20 @@ define(['app/eeda-common', './orderController', './editOrder_event'], function(e
             var btn = $(this);
             btn.attr('disabled', true);
 
+            
+
             //提交前，校验数据
             // if(!$("#orderForm").valid()){
             //     return;
             // }
 
-            // 关闭所有打开的下级从表
-            $('i.fa-chevron-down').closest('a').click();
-
-            btn.attr('disabled', false);
-
-            var order_dto = buildOrderDto();
-            order_dto.action = btn.text();
-
-            console.log('save OrderData....');
-            console.log(order_dto);
-
-            //异步向后台提交数据
-            $.post('/m_save', {
-                params: JSON.stringify(order_dto)
-            }, function(data) {
-                var order = data;
-                console.log(order);
-                if (order.ID > 0) {
-                    if(btn.text().indexOf('打印')>-1){
-                        var pdf_path = '/download/'+order.RETURN_STR;
-                        console.log(pdf_path);
-                        window.open(pdf_path, 'download');
-                        return;//no need to refresh UI
-                    }else if(order.RETURN_STR=='smsFailed'){
-                        $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
-                        return;
-                    }
-
-                    $('#order_id').val(order.ID);
-                    $.scojs_message('操作成功', $.scojs_message.TYPE_OK);
-
-                    eeda.urlAfterSave($("#module_id").val(), order.ID);
-                    //重新取一次数据渲染页面
-                    var structure_json_str = $('#module_structure').val();
-                    var structure_json = JSON.parse(structure_json_str);
-                    structure_json.id = order.ID;
-
-                    //TODO:  这里跟editOrder.js 中重复了,看看如何优化?
-                    var commonHandle=function(){
-                        buildButtonUI(global_order_structure);
-                        bindBtnClick(); //绑定按钮事件
-                        eventController.bindEvent();
-                        $('[data-toggle=tooltip]').tooltip();
-                    };
-                    orderController.fillOrderData(structure_json, commonHandle);
-
-                    $('#saveBtn').attr('disabled', false);
-                } else {
-                    $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
-                    $('#saveBtn').attr('disabled', false);
+            //判断是否是一个跳转按钮 
+            $.when(isLinkJump(btn) ).done(function(is_link_jump) {
+                if(is_link_jump){
+                    return;
+                }else{
+                    common_btn_save(btn);
                 }
-            }, 'json').fail(function() {
-                $.scojs_message('操作失败', $.scojs_message.TYPE_ERROR);
-                $('#saveBtn').attr('disabled', false);
             });
         });
     };

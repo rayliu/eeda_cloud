@@ -194,6 +194,11 @@ define(['./action_btn_visible'],function(){
 
             modal_form.find('input[name=print_template]').val(commandObj.print_template);
 
+            if(commandObj.link_setting){
+                modal_form.find('select[name=link_action]').val(commandObj.link_setting.link_action);
+                modal_form.find('input[name=target_module]').val(commandObj.link_setting.target_module);
+            };
+
             if(commandObj.sms_setting){
                 modal_form.find('input[name=sms_user]').val(commandObj.sms_setting.sms_user);
                 modal_form.find('input[name=sms_pwd]').val(commandObj.sms_setting.sms_pwd);
@@ -256,21 +261,26 @@ define(['./action_btn_visible'],function(){
     $('#editBtnActionModal #modalForm').on('change', '[name=action]', function(){
         console.log($(this).val());
         var selected_value = $(this).val();
-        if(selected_value == '更新'){
+
+        var hideAllSetting = function(){
             $('#modal_print_setting_div').hide();
+            $('#modal_link_setting_div').hide();
             $('#sms_setting_div').hide();
             $('#email_setting_div').hide();
+        };
+
+        hideAllSetting();
+        if(selected_value == '更新'){
+           
+        }else if(selected_value == '页面跳转'){
+            $('#modal_link_setting_div').show();
+           
         }else if(selected_value == '打印'){
             $('#modal_print_setting_div').show();
-            $('#sms_setting_div').hide();
-            $('#email_setting_div').hide();
+           
         }else if(selected_value == '发送短信'){
-            $('#modal_print_setting_div').hide();
             $('#sms_setting_div').show();
-            $('#email_setting_div').hide();
         }else if(selected_value == '发送邮件'){
-            $('#modal_print_setting_div').hide();
-            $('#sms_setting_div').hide();
             $('#email_setting_div').show();
         }
     });
@@ -343,6 +353,10 @@ define(['./action_btn_visible'],function(){
         var action= form.find('select[name=action]').val();
         var print_template= form.find('input[name=print_template]').val();
 
+        var link_setting = {
+            link_action: form.find('select[name=link_action]').val(),
+            target_module: form.find('input[name=target_module]').val()
+        };
         var sms_setting = {
             sms_user: form.find('input[name=sms_user]').val(),
             sms_pwd:  form.find('input[name=sms_pwd]').val(),
@@ -362,6 +376,7 @@ define(['./action_btn_visible'],function(){
             target_obj: target_obj,
             action: action,
             print_template:print_template,
+            link_setting: link_setting,
             sms_setting: sms_setting,
             email_setting: email_setting,
             setValueList: setValueList
