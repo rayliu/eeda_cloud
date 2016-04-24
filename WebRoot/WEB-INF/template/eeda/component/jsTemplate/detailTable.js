@@ -57,6 +57,7 @@
                 $(row).attr('index', index);
                 $(row).attr('parent_row_id', data.PARENT_ROW_ID);
                 $(row).attr('parent_row_index', data.PARENT_ROW_INDEX);
+                $('td:eq(0)',row).append('<span style="float:right;">'+(index+1)+'</span>');
 
                 $(row).append('<input type="hidden" name="id" value="' + id + '"/>');
 
