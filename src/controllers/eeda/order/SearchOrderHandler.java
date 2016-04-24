@@ -145,6 +145,8 @@ public class SearchOrderHandler {
             Long office_id = UserLogin.getCurrentUser().getLong("office_id");
             colCondition += " and office_id ="+office_id;
         }
+        //not show deleted order
+        colCondition += " and eeda_delete ='N'";
         
         String sql = "select t.* "+ subCol +" from t_" + searchDto.structur_id +" t where 1=1 " + colCondition;
         return sql;

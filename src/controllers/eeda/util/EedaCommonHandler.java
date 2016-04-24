@@ -217,12 +217,13 @@ public class EedaCommonHandler {
             logger.debug(orderRec.toJson());
             
         }else{
-            int parentId = ((Double)structure.get("PARENT_ID")).intValue();
+//            int parentId = ((Double)structure.get("PARENT_ID")).intValue();
             String tableName = "t_" + structureId;
             orderRec = Db.findFirst("select * "+subCol+" from "+tableName+ " where parent_id=?", order_id);
-            if(orderRec != null)
+            if(orderRec != null){
                 orderRec.set("structure_id", structureId);
-            logger.debug(orderRec.toJson());
+                logger.debug(orderRec.toJson());
+            }
         }
         return orderRec;
     }

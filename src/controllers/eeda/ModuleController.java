@@ -364,6 +364,7 @@ public class ModuleController extends Controller {
               +" `id` BIGINT(20) NOT NULL AUTO_INCREMENT,"
               +" `parent_id` BIGINT(20) NULL,"
               +" `ref_t_id` BIGINT(20) NULL ,"
+              +" `eeda_delete` char(1) NOT NULL DEFAULT 'N',"
               + "PRIMARY KEY (`id`))";
             Db.update(createTableSql);
             
@@ -737,7 +738,7 @@ public class ModuleController extends Controller {
     public void orderDelete(){
         String sId = getPara("structure_id");
         String orderId = getPara("order_id");
-        int count = Db.update("delete from t_"+sId+" where id=?", orderId);
+        int count = Db.update("update t_"+sId+" set eeda_delete='Y' where id=?", orderId);
         if(count==1){
             renderText("OK");
         }else{
