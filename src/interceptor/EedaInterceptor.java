@@ -50,7 +50,7 @@ public class EedaInterceptor implements Interceptor{
 	        String[] params = para.split("-");
 	        String module_id = params[0];
 	        Long office_id = UserLogin.getCurrentUser().getLong("office_id");
-	        Record rec = Db.findFirst("select * from eeda_modules where office_id=? and id=?", office_id, module_id);
+	        Record rec = Db.findFirst("select * from eeda_modules where (office_id=? and id=?) or sys_only='Y'", office_id, module_id);
 	        if(rec == null){
 	            //throw new AuthorizationException("no permission...");
 	            ai.getController().renderError(403);
