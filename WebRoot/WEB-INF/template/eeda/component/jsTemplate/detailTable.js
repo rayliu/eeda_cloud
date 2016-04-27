@@ -89,6 +89,12 @@
                                 data = '';
                             {{if field.FIELD_TYPE == '仅显示值'}}
                                 return '<input type="text" name="F{{field.ID}}_{{field.FIELD_NAME}}" display_name="{{field.FIELD_DISPLAY_NAME}}" value="' + data + '" class="form-control" disabled/>';
+                            {{else if field.FIELD_TYPE == '日期编辑框'}}
+                                var field_html = template('table_input_date_field_template', {
+                                    id: 'F{{field.ID}}_{{field.FIELD_NAME}}',
+                                    is_require: '{{field.REQUIRED}}'
+                                });
+                                return field_html;
                             {{else if field.FIELD_TYPE == '下拉列表'}}
                                 var field_ext_type_str = '{{#field.FIELD_TYPE_EXT_TYPE}}';
                                 var field_ext_type = $.parseJSON(field_ext_type_str);
