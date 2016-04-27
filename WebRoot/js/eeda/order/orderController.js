@@ -29,7 +29,7 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 		        var ext_type_obj = $.parseJSON(ext_type_json);
 		        if(ext_type_obj)
 		        	disabled = (ext_type_obj.editable==true)?"":"disabled";
-		        if(ext_type_obj.field_role_list){
+		        if(ext_type_obj.field_role_list && ext_type_obj.field_role_list.length>0){
 		        	var user_roles = $.parseJSON($('#user_roles').val());
 		        	var role_exist = false;
 		        	$.each(user_roles, function(i, role_id){

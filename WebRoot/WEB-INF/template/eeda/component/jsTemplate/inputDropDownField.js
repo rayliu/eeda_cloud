@@ -4,7 +4,7 @@
 		<input id="{{id}}" type="text" name="{{id}}" value="{{value}}" field_type='list' style="display:none;"/>
 		<div class="form-group">
 		    <label class="search-label">{{label}}
-		    {{if is_require}} <span style='color:red;display: inherit;'>*</span> {{/if}}
+		    {{if is_require=='Y'}} <span style='color:red;display: inherit;'>*</span> {{/if}}
 		    </label>
 		    <input type="text" class="form-control search-control" 
 		    id="{{id}}_INPUT" name="{{id}}_INPUT" placeholder="请选择" value="{{display_value}}">
