@@ -300,6 +300,12 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                 if(field_type_ext && field_type_ext.enter_next_line){
                     $('#modal_field_enter_next_line').prop('checked', true);
                 }
+                if(field_type_ext && field_type_ext.field_role_list){
+                    $("#modal_field_role_show_div section").empty();
+                    $.each(field_type_ext.field_role_list, function(i, val){
+                        load_role_list(val);
+                    });
+                }
                 if(field_type_ext && field_type_ext.modal_field_default_value_type){
                     $("#modal_field_default_value_type").val(field_type_ext.modal_field_default_value_type)
                     if('系统内置' == field_type_ext.modal_field_default_value_type){
@@ -417,6 +423,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                 var dataArr = json.data;
                 var el = $("#modal_field_default_value");
                 el.empty();
+                el.append('<option></option>');
                 $.each(dataArr, function(i, item){
                     el.append('<option value="'+item.ID+'">'+item.F35_MC+'</option>');
                 });
@@ -441,7 +448,40 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         }
     });
 
+    
+    var load_role_list=function(default_value){
+        if(role_list.length==0){
+            $.post('/module/getRoleList')
+            .then(function(data){
+                if(!data)
+                    return;
 
+                $.each(data, function(i, item){
+                    var role={
+                        id: item.ID,
+                        name: item.NAME
+                    };
+                    role_list.push(role);
+                });
+               
+                var html = template('module_field_role_show', {list: role_list});
+                $('#modal_field_role_show_div section').append(html);
+
+            });
+        }else{
+            var html = template('module_field_role_show', {list: role_list, default_val: default_value});
+            $('#modal_field_role_show_div section').append(html);
+        }
+    };
+
+    var role_list = [];
+    $("#modal_field_role_show_div a.add").on('click', function(){
+        load_role_list();
+    });
+
+    $("#modal_field_role_show_div").on('click', 'a.delete', function(){
+        $(this).parent().remove();
+    });
 
     //对话框关闭，填值到列表中
     $('#modalFormOkBtn').click(function(){
@@ -452,11 +492,18 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         $(tr).find('input.field_type').val(field_type);
         var field_editable = !$('#modal_field_editable').prop('checked');
         var enter_next_line = $('#modal_field_enter_next_line').prop('checked');
+        var field_role_list_select = $('#modal_field_role_show_div select');
+        var field_role_list =[];
+        $.each(field_role_list_select, function(i, item){
+            field_role_list.push($(item).val());
+        });
+
         if('下拉列表'== field_type|| '数据列表' == field_type){
             var field_type_ext={
                 id: $("#modal_field_type_ext_type").val(),
                 name: $("#modal_field_type_ext_type").find("option:selected").text(),
-                assignment_list: w2ui['modal_field_grid']==null?[]:w2ui['modal_field_grid'].records
+                assignment_list: w2ui['modal_field_grid']==null?[]:w2ui['modal_field_grid'].records,
+                field_role_list: field_role_list
             }
             $(tr).find('input.ext_type').val(JSON.stringify(field_type_ext));
         }else{
@@ -466,6 +513,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                 modal_field_default_value_type: $("#modal_field_default_value_type").val(),
                 modal_field_default_value: $("#modal_field_default_value").val(),
                 modal_field_default_value_text: $("#modal_field_default_value_text").val(),
+                field_role_list: field_role_list
             }
             $(tr).find('input.ext_type').val(JSON.stringify(field_type_ext));
         }

@@ -23,11 +23,24 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	        console.log(field.FIELD_DISPLAY_NAME +'FIELD_TYPE:'+field.FIELD_TYPE+'is_require:'+field.REQUIRED);
 
 	        var disabled = "";
+	        var hidden = false;//base on role to show
 	        if(field.FIELD_TYPE_EXT_TYPE && field.FIELD_TYPE_EXT_TYPE !='undefined'){
 	        	var ext_type_json = field.FIELD_TYPE_EXT_TYPE;
 		        var ext_type_obj = $.parseJSON(ext_type_json);
 		        if(ext_type_obj)
 		        	disabled = (ext_type_obj.editable==true)?"":"disabled";
+		        if(ext_type_obj.field_role_list){
+		        	var user_roles = $.parseJSON($('#user_roles').val());
+		        	var role_exist = false;
+		        	$.each(user_roles, function(i, role_id){
+		        		var _exist=$.inArray(role_id+'', ext_type_obj.field_role_list);
+		        		if(_exist>=0){
+		        			role_exist = true;
+		        		}
+		        	});
+		        	if(!role_exist)
+		        		continue;
+		        }
 	        }
 
 	        var field_html = '';

@@ -360,6 +360,7 @@ define(function(){
         buildActionArray: buildActionArray,
         clearDeletedActionIds: function(){
             deletedActionIds = [];
-        }
+        },
+        generateRoleList: generateRoleList
     }
 });
