@@ -353,4 +353,18 @@ a.edit {
     display: inline-block;
     margin-right: 25px;
 }
+
+.col-lg-12>.form-group .search-label{
+    width: 9.5%;
+}
+.col-lg-12>.form-group .search-control{
+    width: 88.9%;
+}
+.col-lg-8>.form-group .search-label{
+    width: 14.3%;
+}
+.col-lg-8>.form-group .search-control{
+    width: 83.3%;
+}
+
 /* ray added */

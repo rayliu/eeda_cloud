@@ -313,6 +313,9 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
                 if(field_type_ext && field_type_ext.enter_next_line){
                     $('#modal_field_enter_next_line').prop('checked', true);
                 }
+                if(field_type_ext && field_type_ext.field_width){
+                    $('#modal_field_width').val(field_type_ext.field_width);
+                }
                 if(field_type_ext && field_type_ext.field_role_list){
                     $("#modal_field_role_show_div section").empty();
                     $.each(field_type_ext.field_role_list, function(i, val){
@@ -505,6 +508,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         $(tr).find('input.field_type').val(field_type);
         var field_editable = !$('#modal_field_editable').prop('checked');
         var enter_next_line = $('#modal_field_enter_next_line').prop('checked');
+        var field_width = $('#modal_field_width').val();
         var field_role_list_select = $('#modal_field_role_show_div select');
         var field_role_list =[];
         $.each(field_role_list_select, function(i, item){
@@ -515,6 +519,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             var field_type_ext={
                 id: $("#modal_field_type_ext_type").val(),
                 name: $("#modal_field_type_ext_type").find("option:selected").text(),
+                field_width: field_width,
                 assignment_list: w2ui['modal_field_grid']==null?[]:w2ui['modal_field_grid'].records,
                 field_role_list: field_role_list
             }
@@ -523,6 +528,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
             var field_type_ext={
                 enter_next_line: enter_next_line,
                 editable: field_editable,
+                field_width: field_width,
                 modal_field_default_value_type: $("#modal_field_default_value_type").val(),
                 modal_field_default_value: $("#modal_field_default_value").val(),
                 modal_field_default_value_text: $("#modal_field_default_value_text").val(),

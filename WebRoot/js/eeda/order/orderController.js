@@ -24,11 +24,16 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 
 	        var disabled = "";
 	        var hidden = false;//base on role to show
+	        var field_width=1;
 	        if(field.FIELD_TYPE_EXT_TYPE && field.FIELD_TYPE_EXT_TYPE !='undefined'){
 	        	var ext_type_json = field.FIELD_TYPE_EXT_TYPE;
 		        var ext_type_obj = $.parseJSON(ext_type_json);
-		        if(ext_type_obj)
+		        if(ext_type_obj){
 		        	disabled = (ext_type_obj.editable==true)?"":"disabled";
+		        }
+		        if(ext_type_obj && ext_type_obj.field_width){
+		        	field_width = ext_type_obj.field_width;
+				}
 		        if(ext_type_obj.field_role_list && ext_type_obj.field_role_list.length>0){
 		        	var user_roles = $.parseJSON($('#user_roles').val());
 		        	var role_exist = false;
@@ -48,6 +53,7 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	            field_html = template('input_field', {
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                label: field.FIELD_DISPLAY_NAME,
+	                field_width: field_width,
 	                disabled: disabled
 	            });
 	        } else if (field.FIELD_TYPE == '文本编辑框') {
@@ -55,6 +61,7 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                label: field.FIELD_DISPLAY_NAME,
 	                is_require: field.REQUIRED,
+	                field_width: field_width,
 	                disabled: disabled
 	            });
 	        } else if (field.FIELD_TYPE == '多行文本编辑框') {
@@ -126,6 +133,7 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 	                id: 'F' + field.ID + '_' + field.FIELD_NAME,
 	                label: field.FIELD_DISPLAY_NAME,
 	                is_require: field.REQUIRED,
+	                field_width: field_width,
 	                disabled: disabled
 	            });
 	        }

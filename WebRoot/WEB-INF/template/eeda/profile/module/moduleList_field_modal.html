@@ -9,22 +9,37 @@
             </div>
             <div class="modal-body">
                 <form id="modalForm" action="">
-                    <div class="form-group ">
-                        <input id="modal_row_id" class="form-control" type="hidden">
-                        <label class="control-label" for="inputSuccess">字段名</label>
-                        <input id="modal_field_name" class="form-control" type="text" name="name" disabled="">
-                        
-                        <div class="checkbox">
-                            <label>
-                                <input style='margin-top: -0px;' type="checkbox" id="modal_field_editable" value="">不可编辑
-                            </label>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group ">
+                                <input id="modal_row_id" class="form-control" type="hidden">
+                                <label class="control-label" for="inputSuccess">字段名</label>
+                                <input id="modal_field_name" class="form-control" type="text" name="name" disabled="">
+                                
+                                <div class="checkbox">
+                                    <label>
+                                        <input style='margin-top: -0px;' type="checkbox" id="modal_field_editable" value="">不可编辑
+                                    </label>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input style='margin-top: -0px;' type="checkbox" id="modal_field_enter_next_line" value="">回车光标移动到下一行,无下行则新增一行
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="checkbox">
-                            <label>
-                                <input style='margin-top: -0px;' type="checkbox" id="modal_field_enter_next_line" value="">回车光标移动到下一行,无下行则新增一行
-                            </label>
+                        <div class="col-lg-6">
+                            <div class="form-group ">
+                                <label class="control-label" for="inputSuccess">字段宽度(1行3列)</label>
+                                <select id="modal_field_width" class="form-control">
+                                    <option value="1">1列</option>
+                                    <option value="2">2列</option>
+                                    <option value="3">3列(全行)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
+                    
                     <div class="form-group ">
                         <label class="control-label" for="inputSuccess">字段显示属性</label>
                         <select id="modal_field_type" class="form-control">
@@ -37,6 +52,7 @@
                             <option>图片</option>
                         </select>
                     </div>
+                    
                     <div id="modal_field_type_ext_div" class="form-group" style="display: none;">
                         <label class="control-label" for="inputSuccess">字段显示属性值高级设定</label>
                         <section class='well'>
