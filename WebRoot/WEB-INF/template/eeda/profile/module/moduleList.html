@@ -20,24 +20,33 @@
     		<div class="btn-header">
 		    	<div id="addProductDiv" style="display: block;">
 		    		<h2>单据设计</h2>
-		    		<div class="checkbox">
-                        <label>
-                            <input style='margin-top: -0px;' type="checkbox" id="module_sys_only" value="sys_only">仅开发可见
-                        </label>
-                    </div>
-                    <div style="color: white;">(module_id:<span id='module_id'></span>)</div>
 				</div>
+				<% if(user_login_id=='admin@eeda123.com'){%>
+					<div class="checkbox">
+	                <label>
+	                        <input style='margin-top: -0px;' type="checkbox" id="module_sys_only" value="sys_only">仅开发可见
+	                    </label>
+	                </div>
+                <%}%>
+                <div class="checkbox">
+                    <label>
+                        <input style='margin-top: -0px;' type="checkbox" id="module_search_only" value="search_only">查询报表
+                    </label>
+                </div>
+                <div style="display: none;">(module_id:<span id='module_id'></span>)</div>
 			</div>
 			<div>
 				  <!-- Nav tabs -->
 				  <ul class="nav nav-tabs" role="tablist">
-				    <li role="presentation" class="active">
-				    	<a href="#fields" aria-controls="fields" role="tab" data-toggle="tab">字段</a>
+				    <li role="presentation" class="active" id="tab_field">
+				    	<a id='tab_field_li' href="#fields" aria-controls="fields" role="tab" data-toggle="tab">字段</a>
 				    </li>
 				    <li role="presentation"><a href="#action" aria-controls="action" role="tab" data-toggle="tab">按钮操作</a></li>
 				    <li role="presentation"><a href="#event" aria-controls="settings" role="tab" data-toggle="tab">事件触发</a></li>
 				    <li role="presentation"><a href="#permission" aria-controls="permission" role="tab" data-toggle="tab">权限</a></li>
-					<li role="presentation"><a href="#customize_search" aria-controls="permission" role="tab" data-toggle="tab">自定义查询</a></li>
+					<li role="presentation">
+						<a id="customize_search_li" href="#customize_search" aria-controls="permission" role="tab" data-toggle="tab">自定义查询</a>
+					</li>
 				  </ul>
 
 				  <!-- Tab panes -->

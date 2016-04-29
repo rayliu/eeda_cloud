@@ -349,4 +349,8 @@ section>a.remove {
 a.edit {
     margin-right: 15px;
 }
+#displayDiv .btn-header .checkbox{
+    display: inline-block;
+    margin-right: 25px;
+}
 /* ray added */

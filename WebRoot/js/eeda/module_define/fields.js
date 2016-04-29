@@ -18,6 +18,19 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
 	document.title = '模块定义 | '+document.title;
     $('#menu_sys_dev').addClass('active').find('ul').addClass('in');
     $('[data-toggle=tooltip]').tooltip();
+
+    $('#module_search_only').change(function(event) {
+        var checked = $(this).prop('checked');
+        if(checked){
+            $('#tab_field').hide();
+            $('#fields').hide();
+            $('#customize_search_li').click();
+        }else{
+            $('#tab_field').show();
+            $('#fields').show();
+            $('#tab_field_li').click();
+        }
+    });
     //-------------   子表的动态处理
     var subIndex=0;
     //添加一个新子表

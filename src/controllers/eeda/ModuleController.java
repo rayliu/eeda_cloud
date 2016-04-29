@@ -240,7 +240,7 @@ public class ModuleController extends Controller {
             //Db.update(" update modules set status = '停用' where id=?", module_id);
         }
         Object sys_only = dto.get("sys_only");
-        if((Boolean)sys_only){
+        if(sys_only != null && (Boolean)sys_only){
             Db.update(" update eeda_modules set sys_only = 'Y' where id=?", module_id);
         }else{
             Db.update(" update eeda_modules set sys_only = 'N' where id=?", module_id);
