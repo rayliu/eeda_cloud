@@ -10,6 +10,8 @@
 
 		<input type="hidden" id="customerId" />
 		<input type="hidden" id="categoryId" />
+		<input type="hidden" id="module_id" />
+		<input type="hidden" id="module_version" />
 		<div id='treeListDiv'>
 	        <ul id="moduleTree" class="ztree"></ul>
 	    </div>
@@ -33,7 +35,7 @@
                         <input style='margin-top: -0px;' type="checkbox" id="module_search_only" value="search_only">查询报表
                     </label>
                 </div>
-                <div style="display: none;">(module_id:<span id='module_id'></span>)</div>
+
 			</div>
 			<div>
 				  <!-- Nav tabs -->
@@ -179,7 +181,7 @@
 					<div role="tabpanel" class="tab-pane" id="customize_search">
 						<section id="customize_search_section" style="margin-top: 10px;">
 							<div class="row">
-						        <div class="col-lg-8" name="add_btn_type_field">
+						        <div class="col-lg-6" name="add_btn_type_field">
 						            <div class="form-group">
 						                <label class="">选择自定义视图</label>
 						                <select id="view_select" class="s_add_btn_type form-control search-control" style="width:60%;">
@@ -191,7 +193,16 @@
 						            </div>
 						        </div>
 
-						        <div class="col-lg-12">
+						        <div class="col-lg-6">
+						        	<div class="form-group">
+						                <label class="">点击编辑跳转至</label>
+						                <select id="jump_target" class="s_add_btn_type form-control search-control" style="width:60%;">
+											<option></option>
+											<% for(m in active_modules){%>
+												<option value="${m.id}">${m.module_name}</option>
+											<%}%>
+						                </select>
+						            </div>
 						        </div>
 
 						        <table id="view_table" class="display" cellspacing="0" style="width: 100%;">

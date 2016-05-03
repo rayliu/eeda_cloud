@@ -137,7 +137,8 @@ define(['zTree','template', './fields'], function (tree, template, fields) {
             $("#addProductDiv").hide();
             $("#displayDiv").hide();
         }
-        $("#module_id").text(treeNode.id);
+        $("#module_id").val(treeNode.id);
+        $("#module_version").val(treeNode.VERSION);
         $("#order_name").val(treeNode.name);
 
         fieldsController.showModuleDetail(treeNode.id);
@@ -153,6 +154,7 @@ define(['zTree','template', './fields'], function (tree, template, fields) {
 	        node.name=data[i].MODULE_NAME;
 	        node.id=data[i].ID;
             node.isParent=true;
+            node.version = data[i].VERSION;
 	        //node.click=nodePlusClickHandler;
 	        zNodes.push(node);
 	        //console.log(node);

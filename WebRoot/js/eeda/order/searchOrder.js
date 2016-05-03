@@ -13,6 +13,15 @@ define(['sb_admin', 'dataTables', 'template', 'datetimepicker_CN', 'sco'], funct
     $('[data-toggle=tooltip]').tooltip();
 
     var buildButtonUI = function(module) {
+        if(json.SEARCH_OBJ){//自定义查询
+            var button_html = template('button_template', {
+                id: 88888888,
+                label: '查询',
+                action: '查询'
+            });
+            $('#button-bar').append(button_html);
+            return;
+        }
         //$('#button-bar').empty();
         for (var i = 0; i < module.ACTION_LIST.length; i++) {
             var buttonObj = module.ACTION_LIST[i];
@@ -92,16 +101,20 @@ define(['sb_admin', 'dataTables', 'template', 'datetimepicker_CN', 'sco'], funct
         });
     };
 
-    var buildCustomizeSearchResultList= function(structure, module, field_list){
+    var buildCustomizeSearchResultList= function(structure, module, search_obj){
         var isEditable = checkEditable(module);
         var isDelete = checkDeletable(module);
+        if(structure.ID==9999999){
+            isDelete = false;
+        }
 
+        var jump_target = search_obj.jump_target == undefined?$('#module_id').val():search_obj.jump_target;
         var list_html = template('search_table_template',
                 {
                     id: structure.ID,
                     label: structure.NAME,
-                    field_list: field_list,
-                    module_id: $('#module_id').val(),
+                    field_list: search_obj.field_list,
+                    module_id: jump_target,
                     isEditable: isEditable,
                     isDelete: isDelete
                 }
@@ -115,16 +128,25 @@ define(['sb_admin', 'dataTables', 'template', 'datetimepicker_CN', 'sco'], funct
 
     var buildStructureUI = function(json){
             var structure = json.STRUCTURE_LIST[0];//主表结构
-            $('#structure_id').val(structure.ID);
-            if(!structure.FIELDS_LIST)
-                return;
 
             if(json.SEARCH_OBJ){//自定义查询
                 var search_obj_str = json.SEARCH_OBJ;
                 var search_obj = $.parseJSON(search_obj_str);
+                if(!structure){
+                    structure={};
+
+                    structure.ID=9999999;
+                    structure.NAME=search_obj.view_name;
+                }
+
                 buildCustomizeSearchUI(search_obj.field_list);
-                buildCustomizeSearchResultList(structure, json, search_obj.field_list);
+                buildCustomizeSearchResultList(structure, json, search_obj);
             }else{
+                
+                $('#structure_id').val(structure.ID);
+                if(!structure.FIELDS_LIST)
+                    return;
+
                 if(structure.STRUCTURE_TYPE == '字段'){
                     var field_html = template('input_hidden_field',
                         {

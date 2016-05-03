@@ -97,7 +97,7 @@ define(['jquery_ui'], function(){
     var buildSearchObj=function(){
 
         var view_name = $('#view_select').val();
-
+        var jump_target = $('#jump_target').val();
         var table_rows = $("#view_table tbody").find('tr');
         var items_array=[];
 
@@ -117,6 +117,7 @@ define(['jquery_ui'], function(){
         console.log(items_array);
         var search_obj={
             view_name: view_name,
+            jump_target: jump_target,
             field_list: items_array
         };
         return search_obj;
@@ -127,7 +128,8 @@ define(['jquery_ui'], function(){
         var search_obj_str = json.SEARCH_OBJ;
         if(search_obj_str){
             var search_obj =  $.parseJSON(search_obj_str);
-            var view_name = $('#view_select').val(search_obj.view_name);
+            $('#view_select').val(search_obj.view_name);
+            $('#jump_target').val(search_obj.jump_target);
             view_table.clear().draw(false);
             $.each(search_obj.field_list, function(i, item){
                 var item={

@@ -691,7 +691,7 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         var auth_list = buildAuthArray();
         var search_obj = customContr.buildSearchObj();
         var dto = {
-            module_id: $('#module_id').text(),
+            module_id: $('#module_id').val(),
             structure_list: structure_list,
             action_list: action_list,
             event_list: event_list,
@@ -750,74 +750,105 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         saveAction($(this), true);
     });
 
+    var callback=function(json){
+        console.log('getOrderStructure....');
+        console.log(json);
+        module_obj = json;
+
+        if(module_obj.SYS_ONLY=='Y'){
+            $('#module_sys_only').prop('checked', true);
+        }else{
+            $('#module_sys_only').prop('checked', false);
+        }
+
+        if(json.SEARCH_OBJ){//自定义查询
+            $('#module_search_only').prop('checked', true);
+        }else{
+            $('#module_search_only').prop('checked', false);
+        }
+        $('#module_search_only').change();
+
+        deletedTableIds=[];//清空delete子表的arr
+        actionController.clearDeletedActionIds();
+        $('#fields_body').empty();
+
+        for (var i = 0; i < json.STRUCTURE_LIST.length; i++) {
+            var structure = json.STRUCTURE_LIST[i];
+            var html = template('table_template',
+                {
+                    id: 'sub'+subIndex,
+                    s_id: structure.ID,
+                    s_name: structure.NAME,
+                    s_type: structure.STRUCTURE_TYPE,
+                    s_parent_id: structure.PARENT_ID,
+                    s_add_btn_type: structure.ADD_BTN_TYPE,
+                    s_add_btn_setting: structure.ADD_BTN_SETTING
+                }
+            );
+
+            $('#fields_body').append(html);
+            var dataTable = $('body').find('table#'+'sub'+subIndex+'_table').DataTable(tableSetting);
+            subIndex++;
+
+            $('[data-toggle=tooltip]').tooltip();
+            // Module.dataTable.clear().draw();
+
+            if(!structure.FIELDS_LIST)
+                return;
+
+
+            for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
+                var field = structure.FIELDS_LIST[j];
+                var item={
+                    "ID": field.ID,
+                    "FIELD_NAME": field.FIELD_NAME,
+                    "FIELD_DISPLAY_NAME": field.FIELD_DISPLAY_NAME,
+                    "FIELD_TYPE": field.FIELD_TYPE,
+                    "FIELD_TYPE_EXT_TYPE": field.FIELD_TYPE_EXT_TYPE,
+                    "FIELD_TYPE_EXT_TEXT": field.FIELD_TYPE_EXT_TEXT,
+                    "REQUIRED": field.REQUIRED,
+                    "LISTED": field.LISTED,
+                    "WIDTH": field.WIDTH,
+                    "FIELD_TEMPLATE_PATH": field.FIELD_TEMPLATE_PATH,
+                    "INDEX_NAME": ''
+                };
+                dataTable.row.add(item).draw(false);
+            }
+        }
+
+        buildActionUI(json);
+        buildEventUI(json);
+        buildAuthUI(json);
+        customContr.buildSearchObjUI(json);
+
+        bindFieldTableEvent();//click event
+    };
+
+    var getModuleDefine=function(){
+        $.post('/module/getOrderStructure', {module_id: $("#module_id").val()}, function(json){
+            callback(json);
+            if(!!window.localStorage){
+                localStorage.setItem('m_'+$("#module_id").val(), JSON.stringify(json));
+            }
+        }, 'json');
+    }
+
     var showModuleDetail = function(module_id){
-            $.post('/module/getOrderStructure', {module_id: module_id}, function(json){
-                console.log('getOrderStructure....');
-                console.log(json);
-                module_obj = json;
-
-                if(module_obj.SYS_ONLY=='Y'){
-                    $('#module_sys_only').prop('checked', true);
+        if(!!window.localStorage){
+            var json_str = localStorage.getItem('m_'+module_id);
+            if(json_str){
+                var json = $.parseJSON(json_str);
+                if(json.MODULE_VERSION == $("#module_version").val()){
+                    callback(json);
                 }else{
-                    $('#module_sys_only').prop('checked', false);
+                    getModuleDefine();
                 }
+            }else{
+                getModuleDefine();
+            }
 
-                deletedTableIds=[];//清空delete子表的arr
-                actionController.clearDeletedActionIds();
-                $('#fields_body').empty();
-
-                for (var i = 0; i < json.STRUCTURE_LIST.length; i++) {
-                    var structure = json.STRUCTURE_LIST[i];
-                    var html = template('table_template',
-                        {
-                            id: 'sub'+subIndex,
-                            s_id: structure.ID,
-                            s_name: structure.NAME,
-                            s_type: structure.STRUCTURE_TYPE,
-                            s_parent_id: structure.PARENT_ID,
-                            s_add_btn_type: structure.ADD_BTN_TYPE,
-                            s_add_btn_setting: structure.ADD_BTN_SETTING
-                        }
-                    );
-
-                    $('#fields_body').append(html);
-                    var dataTable = $('body').find('table#'+'sub'+subIndex+'_table').DataTable(tableSetting);
-                    subIndex++;
-
-                    $('[data-toggle=tooltip]').tooltip();
-                    // Module.dataTable.clear().draw();
-
-                    if(!structure.FIELDS_LIST)
-                        return;
-
-
-                    for (var j = 0; j < structure.FIELDS_LIST.length; j++) {
-                        var field = structure.FIELDS_LIST[j];
-                        var item={
-                            "ID": field.ID,
-                            "FIELD_NAME": field.FIELD_NAME,
-                            "FIELD_DISPLAY_NAME": field.FIELD_DISPLAY_NAME,
-                            "FIELD_TYPE": field.FIELD_TYPE,
-                            "FIELD_TYPE_EXT_TYPE": field.FIELD_TYPE_EXT_TYPE,
-                            "FIELD_TYPE_EXT_TEXT": field.FIELD_TYPE_EXT_TEXT,
-                            "REQUIRED": field.REQUIRED,
-                            "LISTED": field.LISTED,
-                            "WIDTH": field.WIDTH,
-                            "FIELD_TEMPLATE_PATH": field.FIELD_TEMPLATE_PATH,
-                            "INDEX_NAME": ''
-                        };
-                        dataTable.row.add(item).draw(false);
-                    }
-                }
-
-                buildActionUI(json);
-                buildEventUI(json);
-                buildAuthUI(json);
-                customContr.buildSearchObjUI(json);
-
-                bindFieldTableEvent();//click event
-            }, 'json');
-        };
+        }
+    };
 
         var buildActionUI=function(json){
             if(!json.ACTION_LIST)

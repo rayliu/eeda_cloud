@@ -1,5 +1,5 @@
 <script id="${id}" type="text/html">
-	<div class="col-lg-{{field_width*4}}">
+	<div class="col-lg-{{(field_width==null?1:field_width)*4}}">
 		<div class="form-group">
 		    <label class="search-label">{{label}}
 		    {{if is_require=='Y'}} <span style='color:red;display: inherit;'>*</span> {{/if}}

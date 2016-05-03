@@ -47,14 +47,38 @@ public class ModuleController extends Controller {
     private Logger logger = Logger.getLogger(ModuleController.class);
     Subject currentUser = SecurityUtils.getSubject();
     
-    Long office_id = UserLogin.getCurrentUser().getLong("office_id");
-    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
+    
+//    ParentOfficeModel pom = ParentOffice.getInstance().getOfficeId(this);
     
     @Before(EedaMenuInterceptor.class)
     public void index() {
+        Long office_id = UserLogin.getCurrentUser().getLong("office_id");
         List<Record> viewsRecs = Db.find("select * from eeda_sql_views where office_id=?", office_id);
         setAttr("sqlViews", viewsRecs);
+        setActiveModules();
         render("/eeda/profile/module/moduleList.html");
+    }
+    
+    
+    private void setActiveModules(){
+        String sql = "select id, module_name, parent_id, office_id, seq from eeda_modules "
+                + "where status = '启用' and sys_only ='N' and office_id="
+                +LoginUserController.getLoginUser().get("office_id");
+        
+        List<Record> modules = Db.find(sql);
+        if(modules == null){
+            modules = Collections.EMPTY_LIST;
+        }else{
+            for (Record module : modules) {
+                String fieldSql = "select f.* from eeda_structure s, eeda_field f where  f.structure_id = s.id and s.parent_id is null and s.module_id=?";
+                List<Record> fields = Db.find(fieldSql, module.get("id"));
+                if(fields != null && fields.size()>0){
+                    module.set("field_list", fields);
+                    module.set("structure_id", fields.get(0).get("structure_id"));
+                }
+            }
+        }
+        setAttr("active_modules", modules);
     }
     
     public void getActiveModules(){
@@ -69,7 +93,7 @@ public class ModuleController extends Controller {
             for (Record module : modules) {
                 String fieldSql = "select f.* from eeda_structure s, eeda_field f where  f.structure_id = s.id and s.parent_id is null and s.module_id=?";
                 List<Record> fields = Db.find(fieldSql, module.get("id"));
-                if(fields != null){
+                if(fields != null && fields.size()>0){
                     module.set("field_list", fields);
                     module.set("structure_id", fields.get(0).get("structure_id"));
                 }
@@ -111,7 +135,7 @@ public class ModuleController extends Controller {
     public void searchModule(){
     	String parent_id = getPara("id");
     	String cons = "";
-    	String sql = "select id, module_name, parent_id, office_id, seq from eeda_modules where office_id="
+    	String sql = "select id, module_name, parent_id, office_id, seq, version from eeda_modules where office_id="
     			+LoginUserController.getLoginUser().get("office_id");
     	
     	List<Record> modules = null;
@@ -592,12 +616,13 @@ public class ModuleController extends Controller {
     }
     
     //针对字段设置生成预览页面
+    @Before(EedaMenuInterceptor.class)
     public void preview(){
         String module_id =getPara();
         setAttr("module_id", module_id);
-       
-//        HomeController.loadMenu();
         
+        Record module = Db.findFirst("select * from eeda_modules where id=?", module_id);
+        setAttr("module_version", module.get("version"));
         render("/eeda/profile/module/editOrder.html");
     }
     
@@ -671,6 +696,7 @@ public class ModuleController extends Controller {
     }
     
     public void getRoleList(){
+        Long office_id = UserLogin.getCurrentUser().getLong("office_id");
         List<Record> recs = Db.find("select * from eeda_role where office_id=?", office_id);
         renderJson(recs);
     }
