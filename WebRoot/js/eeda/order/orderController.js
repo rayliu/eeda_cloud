@@ -34,7 +34,7 @@ define(['template', 'datetimepicker_CN', './editOrder_btn', './editOrder_event']
 		        if(ext_type_obj && ext_type_obj.field_width){
 		        	field_width = ext_type_obj.field_width;
 				}
-		        if(ext_type_obj.field_role_list && ext_type_obj.field_role_list.length>0){
+		        if(ext_type_obj && ext_type_obj.field_role_list && ext_type_obj.field_role_list.length>0){
 		        	var user_roles = $.parseJSON($('#user_roles').val());
 		        	var role_exist = false;
 		        	$.each(user_roles, function(i, role_id){
