@@ -23,11 +23,11 @@ define(['jquery_ui', 'sco', 'w2ui', './action', './event', './auth', './fields_a
         var checked = $(this).prop('checked');
         if(checked){
             $('#tab_field').hide();
-            $('#fields').hide();
+            // $('#fields').hide();
             $('#customize_search_li').click();
         }else{
             $('#tab_field').show();
-            $('#fields').show();
+            // $('#fields').show();
             $('#tab_field_li').click();
         }
     });
