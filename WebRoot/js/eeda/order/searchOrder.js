@@ -13,7 +13,7 @@ define(['sb_admin', 'dataTables', 'template', 'datetimepicker_CN', 'sco'], funct
     $('[data-toggle=tooltip]').tooltip();
 
     var buildButtonUI = function(module) {
-        if(json.SEARCH_OBJ){//自定义查询
+        if(module.SEARCH_OBJ){//自定义查询
             var button_html = template('button_template', {
                 id: 88888888,
                 label: '查询',
