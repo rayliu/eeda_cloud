@@ -1,4 +1,4 @@
-define(['./action_btn_visible'],function(){
+define(['./action_btn_visible', './fields_add_btn_type'],function(v_c, a_c){
 
     var template = require('template');
 
@@ -186,11 +186,13 @@ define(['./action_btn_visible'],function(){
         if(command_json){//回显
             commandObj = JSON.parse(command_json);
             modal_form.find('input[name=command_name]').val(commandObj.command_name);
-            modal_form.find('input[name=condition]').val(commandObj.condition);
-            modal_form.find('input[name=target_obj]').val(commandObj.target_obj);
             var action_select = modal_form.find('select[name=action]')
             action_select.val(commandObj.action);
             action_select.trigger('change');
+            modal_form.find('select[name=target_order]').val(commandObj.target_order);
+
+            modal_form.find('input[name=condition]').val(commandObj.condition);
+            modal_form.find('input[name=target_obj]').val(commandObj.target_obj);
 
             modal_form.find('input[name=print_template]').val(commandObj.print_template);
 
@@ -222,6 +224,51 @@ define(['./action_btn_visible'],function(){
                         }
                     );
                     fieldSetRow.append(html);
+                });
+            }
+
+            if(commandObj.action_list.length>0){
+                $('#command_tab_list li:not(:first)').remove();
+                $('[name=tab-content] div.tab-pane:not(:first)').remove();
+                $('#command_tab_list').show();
+                    // data_source: tab.find('[name=data_source]').val(),
+                    // target_obj: tab.find('[name=target_obj]').val(),
+                    // condtion: tab.find('[name=condition]').val(),
+                    // action_set_value_list: action_set_value_list
+                // fieldSetRow.empty();
+                $.each(commandObj.action_list, function(i, action){
+                    var action_num = i+1;
+                    if(action_num==1)
+                        return true;
+
+                    var li_html = '<li role="presentation">'+
+                       '    <i class="remove glyphicon glyphicon-remove" style="position: absolute; z-index: 1; margin-top: 1px; margin-left: 2px;"></i>'+
+                       '    <a href="#action_tab_'+action_num+'" aria-controls="fields" role="tab" data-toggle="tab">动作'+action_num+'</a>'+
+                       '</li>';
+                    $('#command_tab_list').append(li_html);
+                    $('#command_tab_list li').removeClass('active');
+                    $('#command_tab_list li:last').addClass('active');
+
+                    var html = template('module_btn_action_tab', 
+                        {
+                            seq: action_num,
+                            module_source_list: a_c.module_source_list
+                        });
+                    $('#modalForm .tab-content .tab-pane').removeClass('active');
+                    $('#modalForm .tab-content').append(html);
+                    var tab = $('.tab-content .tab-pane:last');
+                    tab.find('[name=data_source]').val(action.data_source);
+                    tab.find('[name=target_obj]').val(action.target_obj);
+                    tab.find('[name=condition]').val(action.condition);
+                    $.each(action.action_set_value_list, function(index, el) {
+                        var html = template('editBtnActionModal_add_field_template',
+                            {
+                                field_list: []
+                            }
+                        );
+                        tab.find('[name=field_setting_div] .row').append(html);
+                        tab.find('[name=field_setting_div] .row input:last').val(el);
+                    });
                 });
             }
         }
@@ -257,33 +304,7 @@ define(['./action_btn_visible'],function(){
     };
 
     // ------------------------------modal setting event handle
-    //editBtnActionModal 动作切换
-    $('#editBtnActionModal #modalForm').on('change', '[name=action]', function(){
-        console.log($(this).val());
-        var selected_value = $(this).val();
-
-        var hideAllSetting = function(){
-            $('#modal_print_setting_div').hide();
-            $('#modal_link_setting_div').hide();
-            $('#sms_setting_div').hide();
-            $('#email_setting_div').hide();
-        };
-
-        hideAllSetting();
-        if(selected_value == '更新'){
-           
-        }else if(selected_value == '页面跳转'){
-            $('#modal_link_setting_div').show();
-           
-        }else if(selected_value == '打印'){
-            $('#modal_print_setting_div').show();
-           
-        }else if(selected_value == '发送短信'){
-            $('#sms_setting_div').show();
-        }else if(selected_value == '发送邮件'){
-            $('#email_setting_div').show();
-        }
-    });
+   
 
     //editBtnActionModal 添加字段
     $('#editBtnActionModal').on('click', 'button[name=addField]', function(){
@@ -348,9 +369,12 @@ define(['./action_btn_visible'],function(){
                 setValueList.push(value);
         }
         var command_name = form.find('input[name=command_name]').val();
-        var condtion = form.find('input[name=condition]').val();
+        var action = form.find('select[name=action]').val();
+        var target_order = form.find('select[name=target_order]').val();
+
+        var condition = form.find('input[name=condition]').val();
         var target_obj = form.find('input[name=target_obj]').val();
-        var action= form.find('select[name=action]').val();
+        
         var print_template= form.find('input[name=print_template]').val();
 
         var link_setting = {
@@ -370,18 +394,46 @@ define(['./action_btn_visible'],function(){
             email_body: form.find('input[name=email_body]').val()
         };
 
+        action_list = [];
+        if(action=='新增' || action=='更新'){
+            var tabs = $('#modalForm .tab-content [role=tabpanel]');
+
+            $.each(tabs, function(i, tab){
+                var tab = $(tab);
+                var action_set_value_list = [];
+                var field_set_row = tab.find('[name=field_setting_div] .row [name=field_value]');
+                for(var i=0; i< field_set_row.length; i++){
+                    var input = $(field_set_row[i]);
+                    var value = input.val();
+                    if(value)
+                        action_set_value_list.push(value);
+                }
+
+                var action = {
+                    data_source: tab.find('[name=data_source]').val(),
+                    target_obj: tab.find('[name=target_obj]').val(),
+                    condition: tab.find('[name=condition]').val(),
+                    action_set_value_list: action_set_value_list
+                };
+                action_list.push(action);
+            });
+        }
+
         var json_obj = {
             command_name: command_name,
-            condition: condtion,
-            target_obj: target_obj,
             action: action,
+            target_order: target_order,
+
+            target_obj: target_obj,
+            condition: condition,
             print_template:print_template,
             link_setting: link_setting,
             sms_setting: sms_setting,
             email_setting: email_setting,
-            setValueList: setValueList
+            setValueList: setValueList,
+            action_list: action_list
         }
-
+        console.log(json_obj);
         command_li_command_name.text(json_obj.command_name);
         command_json_input.val(JSON.stringify(json_obj));
         $('#editBtnActionModal').modal('hide');

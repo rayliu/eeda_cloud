@@ -4,6 +4,111 @@ define(function(){
 
     var current_section;
 
+    var module_source_list=[];
+    $('#editBtnActionModal').on('show.bs.modal', function (e) {
+        var target_order_el = $('#modalForm select[name=target_order]');
+        target_order_el.empty();
+        $.post("/module/getActiveModules", function(json){
+            target_order_el.append('<option></option>');
+            if(json){
+                modal_module_list = json;
+                for (var i = 0; i < json.length; i++) {
+                    var module = json[i];
+                    target_order_el.append('<option>'+module.MODULE_NAME+'</option>');
+                };
+            }
+        });
+
+        var s_name_arr = $('#fields_body .s_name');
+        var data_source_el = $('.tab-content select[name=data_source]');
+        data_source_el.empty();
+        $.each(s_name_arr, function(i, item){
+            var name = $(item).val();
+            if(i>0){
+                name = module_source_list[0]+'.'+$(item).val();
+            }
+            module_source_list.push(name);
+            
+            data_source_el.append('<option>'+name+'</option>');
+        });
+    });
+
+    $('#add_command_tab').click(function(){
+        var action_num=$('#command_tab_list li').length+1;
+        if(action_num==6){
+            alert('最多只能添加5个动作.');
+            return;
+        }
+        var html = '<li role="presentation">'+
+                   '    <i class="remove glyphicon glyphicon-remove" style="position: absolute; z-index: 1; margin-top: 1px; margin-left: 2px;"></i>'+
+                   '    <a href="#action_tab_'+action_num+'" aria-controls="fields" role="tab" data-toggle="tab">动作'+action_num+'</a>'+
+                   '</li>';
+        $('#command_tab_list').append(html);
+        $('#command_tab_list li').removeClass('active');
+        $('#command_tab_list li:last').addClass('active');
+
+        //添加 tab_pannel
+        var html = template('module_btn_action_tab', 
+            {
+                seq: action_num,
+                module_source_list: module_source_list
+            });
+        $('#modalForm .tab-content .tab-pane').removeClass('active');
+        $('#modalForm .tab-content').append(html);
+    });
+
+    $('#command_tab_list').on('click', '.remove', function(){
+        var seq = $(this).parent().index();
+        $('#action_tab_'+seq).remove();
+        $(this).parent().remove();
+        $('#command_tab_list li').removeClass('active');
+        $('#command_tab_list li:last').addClass('active');
+
+        $('#modalForm .tab-content .tab-pane').removeClass('active');
+        $('.tab-content .tab-pane:last').addClass('active');
+    });
+
+     //editBtnActionModal 动作切换
+    $('#editBtnActionModal #modalForm').on('change', '[name=action]', function(){
+        console.log($(this).val());
+        var selected_value = $(this).val();
+
+        var hideAllSetting = function(){
+            $('#target_order_div').hide();
+            $('#command_tab_list').hide();
+            $('#action_row').hide();
+            $('#modal_print_setting_div').hide();
+            $('#modal_link_setting_div').hide();
+            $('#sms_setting_div').hide();
+            $('#email_setting_div').hide();
+        };
+
+        hideAllSetting();
+        
+        if(selected_value == '更新' || selected_value == '新增'){
+            $('#command_tab_list li').removeClass('active');
+            $('#command_tab_list li:first').addClass('active');
+            $('#editBtnActionModal .tab-content .tab-pane').removeClass('active');
+            $('#editBtnActionModal .tab-content .tab-pane:first').addClass('active');
+
+            $('#command_tab_list').show();
+            $('#action_row').show();
+            $('#target_order_div').show();
+        }else{
+            $('#editBtnActionModal .tab-content .tab-pane').removeClass('active');
+            $('#editBtnActionModal .tab-content .tab-pane:first').addClass('active');
+            if(selected_value == '页面跳转'){
+                $('#modal_link_setting_div').show();
+            }else if(selected_value == '打印'){
+                $('#modal_print_setting_div').show();
+            }else if(selected_value == '发送短信'){
+                $('#sms_setting_div').show();
+            }else if(selected_value == '发送邮件'){
+                $('#email_setting_div').show();
+            }
+        } 
+    });
+
     var addBtnSettingClick = function(btn){
         var $select = $(btn).parent().find('select');
         current_section = $select.parent().parent().parent();
@@ -101,47 +206,6 @@ define(function(){
         }
     };
 
-    // $('.addColField').click(function(event) {
-    //     var structrue_id = $('#modal_module_source').val();
-        
-
-
-    //     for (var i = 0; i < modal_module_list.length; i++) {
-    //         var module = modal_module_list[i];
-    //         if(structrue_id == module.STRUCTURE_ID){
-    //             var html = template('table_add_btn_field_template', 
-    //                 {   field_list:    module.FIELD_LIST,
-    //                     to_field_list: to_field_list
-    //                 });
-    //             var div = $('.addColField').parent();
-    //             div.find('.row').append(html);
-    //             break;
-    //         }
-    //     }
-    // });
-
-   
-    // $('#modal_add_col_div').on('click', '.delete', function(e){
-    //     $(this).parent().remove();
-    // });
-
-    // $('.addConditionField').click(function(event) {
-    //     var structrue_id = $('#modal_module_source').val();
-    //     for (var i = 0; i < modal_module_list.length; i++) {
-    //         var module = modal_module_list[i];
-    //         if(structrue_id == module.STRUCTURE_ID){
-    //             var html = template('table_add_btn_condtion_template', {field_list: module.FIELD_LIST});
-    //             var div = $('.addConditionField').parent();
-    //             div.find('.row').append(html);
-    //             break;
-    //         }
-    //     }
-    // });
-
-    // $('#modal_add_condition_div').on('click', '.delete', function(e){
-    //     $(this).parent().remove();
-    // });
-
     $('.addFillbackField').click(function(event) {
         var table_id = $('#modal_s_id').val();
         var to_field_list=null;
@@ -220,6 +284,7 @@ define(function(){
     });
 
     return {
-        addBtnSettingClick: addBtnSettingClick
+        addBtnSettingClick: addBtnSettingClick,
+        module_source_list: module_source_list,
     }
 });
